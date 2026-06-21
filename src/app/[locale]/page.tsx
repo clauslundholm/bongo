@@ -13,6 +13,7 @@ import Reveal from "@/components/Reveal";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getEvents } from "@/lib/data/events";
+import { getPageContent } from "@/lib/data/content";
 
 export const revalidate = 60;
 
@@ -22,10 +23,20 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
   const events = await getEvents();
+  const homeHero = await getPageContent("home", locale, {
+    badge: dict.hero.badge,
+    title1: dict.hero.title1,
+    title2: dict.hero.title2,
+    sub: dict.hero.sub,
+    cta: dict.hero.cta,
+    heroVideo: "",
+    heroImage: "",
+    heroHeight: "auto",
+  });
 
   return (
     <>
-      <Hero locale={locale} dict={dict} />
+      <Hero locale={locale} dict={dict} hero={homeHero} />
 
       <Marquee items={dict.marquee} />
 

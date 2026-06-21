@@ -2,14 +2,14 @@
 
 import { useActionState, useState } from "react";
 import { saveContent, type FormState } from "@/app/admin/actions";
-import { TextField, TextArea, SelectField, HERO_HEIGHT_OPTIONS } from "./AdminFields";
-import MediaField from "./MediaField";
+import { TextField, TextArea } from "./AdminFields";
+import HeroBgFields from "./HeroBgFields";
 
 function str(v: unknown): string {
   return typeof v === "string" ? v : "";
 }
 
-export default function EventsHeroForm({
+export default function HomeHeroForm({
   locale,
   initial,
 }: {
@@ -17,9 +17,11 @@ export default function EventsHeroForm({
   initial: Record<string, unknown>;
 }) {
   const [f, setF] = useState({
-    kicker: str(initial.kicker),
-    title: str(initial.title),
+    badge: str(initial.badge),
+    title1: str(initial.title1),
+    title2: str(initial.title2),
     sub: str(initial.sub),
+    cta: str(initial.cta),
     heroVideo: str(initial.heroVideo),
     heroImage: str(initial.heroImage),
     heroHeight: str(initial.heroHeight) || "auto",
@@ -31,29 +33,27 @@ export default function EventsHeroForm({
 
   return (
     <form action={action} className="space-y-6">
-      <input type="hidden" name="key" value="events" />
+      <input type="hidden" name="key" value="home" />
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="data" value={payload} />
 
       <div className="pp-card space-y-4 p-5">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-admin-muted">Top af siden</h3>
-        <TextField label="Overlinje (kicker)" value={f.kicker} onChange={set("kicker")} />
-        <TextField label="Titel" value={f.title} onChange={set("title")} />
-        <TextArea label="Undertekst" value={f.sub} onChange={set("sub")} rows={2} />
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-admin-muted">Hero-tekst</h3>
+        <TextField label="Badge (overlinje)" value={f.badge} onChange={set("badge")} />
+        <TextField label="Titel — linje 1" value={f.title1} onChange={set("title1")} />
+        <TextField label="Titel — linje 2 (regnbue)" value={f.title2} onChange={set("title2")} />
+        <TextArea label="Undertekst" value={f.sub} onChange={set("sub")} rows={3} />
+        <TextField label="Knaptekst (CTA)" value={f.cta} onChange={set("cta")} />
       </div>
 
-      <div className="pp-card space-y-4 p-5">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-admin-muted">Baggrund (hero)</h3>
-        <MediaField
-          label="Baggrundsvideo"
-          accept="video"
-          value={f.heroVideo}
-          onChange={set("heroVideo")}
-          hint="Tom video = standard-udseende. Afspilles automatisk, lydløst og i loop."
-        />
-        <MediaField label="Baggrundsbillede (fallback / poster)" accept="image" value={f.heroImage} onChange={set("heroImage")} />
-        <SelectField label="Hero-højde" value={f.heroHeight} onChange={set("heroHeight")} options={HERO_HEIGHT_OPTIONS} />
-      </div>
+      <HeroBgFields
+        video={f.heroVideo}
+        image={f.heroImage}
+        height={f.heroHeight}
+        onVideo={set("heroVideo")}
+        onImage={set("heroImage")}
+        onHeight={set("heroHeight")}
+      />
 
       {state.error && <p className="rounded-xl border border-admin-line bg-admin-peach px-4 py-3 text-sm text-admin-peach-text">⚠️ {state.error}</p>}
       {state.ok && <p className="rounded-xl border border-admin-line bg-admin-green px-4 py-3 text-sm text-admin-green-text">✅ Gemt — ændringer er live.</p>}

@@ -2,8 +2,8 @@
 
 import { useActionState, useState } from "react";
 import { saveContent, type FormState } from "@/app/admin/actions";
-import { TextField, TextArea, IconBtn, SelectField, HERO_HEIGHT_OPTIONS } from "./AdminFields";
-import MediaField from "./MediaField";
+import { TextField, TextArea, IconBtn } from "./AdminFields";
+import HeroBgFields from "./HeroBgFields";
 
 type Block = { title: string; paragraphsText: string; listText: string };
 type RawBlock = { title?: string; paragraphs?: string[]; list?: string[] };
@@ -94,28 +94,14 @@ export default function BookingContentForm({
         <TextField label="Knaptekst (CTA)" value={meta.cta} onChange={(v) => setMeta({ ...meta, cta: v })} />
       </div>
 
-      <div className="pp-card space-y-4 p-5">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-admin-muted">Baggrund (hero)</h3>
-        <MediaField
-          label="Baggrundsvideo"
-          accept="video"
-          value={meta.heroVideo}
-          onChange={(v) => setMeta({ ...meta, heroVideo: v })}
-          hint="Tom video = brug billede. Afspilles automatisk, lydløst og i loop."
-        />
-        <MediaField
-          label="Baggrundsbillede (fallback / poster)"
-          accept="image"
-          value={meta.heroImage}
-          onChange={(v) => setMeta({ ...meta, heroImage: v })}
-        />
-        <SelectField
-          label="Hero-højde"
-          value={meta.heroHeight}
-          onChange={(v) => setMeta({ ...meta, heroHeight: v })}
-          options={HERO_HEIGHT_OPTIONS}
-        />
-      </div>
+      <HeroBgFields
+        video={meta.heroVideo}
+        image={meta.heroImage}
+        height={meta.heroHeight}
+        onVideo={(v) => setMeta({ ...meta, heroVideo: v })}
+        onImage={(v) => setMeta({ ...meta, heroImage: v })}
+        onHeight={(v) => setMeta({ ...meta, heroHeight: v })}
+      />
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">

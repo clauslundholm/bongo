@@ -2,7 +2,8 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import BookingContentForm from "@/components/admin/BookingContentForm";
 import AboutContentForm from "@/components/admin/AboutContentForm";
-import EventsHeroForm from "@/components/admin/EventsHeroForm";
+import HeroForm from "@/components/admin/HeroForm";
+import HomeHeroForm from "@/components/admin/HomeHeroForm";
 import { setContentLocale, resetContent } from "../../actions";
 import { adminGetContent } from "@/lib/admin-data";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -10,22 +11,38 @@ import { locales, localeNames, localeFlags, isLocale, type Locale } from "@/i18n
 
 export const dynamic = "force-dynamic";
 
+const HERO_DEFAULTS = { heroVideo: "", heroImage: "", heroHeight: "auto" };
+
 const KEYS = [
+  { id: "home", label: "Forside (hero)" },
   { id: "about", label: "Hvad er Bongo's" },
   { id: "howto", label: "How to Bingo" },
   { id: "fest", label: "Events & Festivaller" },
   { id: "corp", label: "Virksomheder" },
   { id: "events", label: "Shows (hero)" },
+  { id: "faq", label: "FAQ (hero)" },
+  { id: "kontakt", label: "Kontakt (hero)" },
 ] as const;
 type Key = (typeof KEYS)[number]["id"];
 
 function fallbackFor(key: Key, locale: Locale) {
   const dict = getDictionary(locale);
-  if (key === "about") return dict.about;
+  if (key === "about") return { ...dict.about, ...HERO_DEFAULTS };
   if (key === "corp") return dict.corp;
   if (key === "fest") return dict.fest;
   if (key === "howto") return dict.howto;
-  return { kicker: dict.upcoming.kicker, title: dict.upcoming.title, sub: dict.upcoming.sub, heroVideo: "", heroImage: "", heroHeight: "auto" };
+  if (key === "events") return { kicker: dict.upcoming.kicker, title: dict.upcoming.title, sub: dict.upcoming.sub, ...HERO_DEFAULTS };
+  if (key === "faq") return { kicker: "", title: dict.faq.title, sub: dict.faq.sub, ...HERO_DEFAULTS };
+  if (key === "kontakt") return { kicker: "", title: dict.contact.title, sub: dict.contact.sub, ...HERO_DEFAULTS };
+  // home
+  return {
+    badge: dict.hero.badge,
+    title1: dict.hero.title1,
+    title2: dict.hero.title2,
+    sub: dict.hero.sub,
+    cta: dict.hero.cta,
+    ...HERO_DEFAULTS,
+  };
 }
 
 export default async function ContentPage({
@@ -102,8 +119,10 @@ export default async function ContentPage({
       <div className="mt-5">
         {key === "about" ? (
           <AboutContentForm contentKey={key} locale={locale} initial={current} />
-        ) : key === "events" ? (
-          <EventsHeroForm locale={locale} initial={current} />
+        ) : key === "home" ? (
+          <HomeHeroForm locale={locale} initial={current} />
+        ) : key === "events" || key === "faq" || key === "kontakt" ? (
+          <HeroForm contentKey={key} locale={locale} initial={current} showKicker={key === "events"} />
         ) : (
           <BookingContentForm contentKey={key} locale={locale} initial={current} />
         )}

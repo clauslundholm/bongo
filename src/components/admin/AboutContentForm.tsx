@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { saveContent, type FormState } from "@/app/admin/actions";
 import { TextField, TextArea, IconBtn } from "./AdminFields";
+import HeroBgFields from "./HeroBgFields";
 
 type Step = { t: string; d: string };
 
@@ -28,6 +29,9 @@ export default function AboutContentForm({
     prizesTitle: str(initial.prizesTitle),
     prizes: str(initial.prizes),
     faqCta: str(initial.faqCta),
+    heroVideo: str(initial.heroVideo),
+    heroImage: str(initial.heroImage),
+    heroHeight: str(initial.heroHeight) || "auto",
   });
   const [how, setHow] = useState<Step[]>(
     Array.isArray(initial.how)
@@ -69,6 +73,15 @@ export default function AboutContentForm({
         <TextField label="Titel" value={f.title} onChange={set("title")} />
         <TextArea label="Intro" value={f.intro} onChange={set("intro")} rows={2} />
       </div>
+
+      <HeroBgFields
+        video={f.heroVideo}
+        image={f.heroImage}
+        height={f.heroHeight}
+        onVideo={set("heroVideo")}
+        onImage={set("heroImage")}
+        onHeight={set("heroHeight")}
+      />
 
       <div className="pp-card space-y-4 p-5">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-admin-muted">Historie</h3>

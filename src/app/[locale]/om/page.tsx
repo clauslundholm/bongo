@@ -18,16 +18,49 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
-  const about = await getPageContent("about", locale, dict.about);
+  const about = await getPageContent("about", locale, {
+    ...dict.about,
+    heroVideo: "",
+    heroImage: "",
+    heroHeight: "auto",
+  });
+  const heroVideo = about.heroVideo?.trim();
+  const hh = (about.heroHeight ?? "").trim();
+  const heroStyle = hh && hh !== "auto" ? { minHeight: `${hh}vh` } : undefined;
 
   return (
     <>
-      <section className="relative overflow-hidden bg-bongo-purple bg-dots pt-16 pb-14 px-5 sm:px-8 text-center">
-        <Image src="/characters/dancer2.png" alt="" width={200} height={200} className="pointer-events-none absolute left-4 bottom-0 hidden w-36 animate-float md:block" />
-        <Image src="/characters/dancer2-reverse.png" alt="" width={200} height={200} className="pointer-events-none absolute right-4 bottom-0 hidden w-36 animate-float md:block" />
-        <p className="font-display uppercase text-bongo-yellow text-xl">{dict.whatis.kicker}</p>
-        <h1 className="text-5xl sm:text-8xl text-white text-stroke">{about.title}</h1>
-        <p className="mx-auto mt-4 max-w-xl font-body text-white/90 text-lg">{about.intro}</p>
+      <section
+        style={heroStyle}
+        className={`relative flex flex-col items-center justify-center overflow-hidden px-5 py-14 sm:px-8 text-center ${
+          heroVideo ? "bg-bongo-black" : "bg-bongo-purple bg-dots"
+        }`}
+      >
+        {heroVideo ? (
+          <>
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={about.heroImage?.trim() || undefined}
+              className="absolute inset-0 h-full w-full object-cover opacity-45"
+            >
+              <source src={heroVideo} />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-bongo-black/55 via-bongo-purple/20 to-bongo-black" />
+          </>
+        ) : (
+          <>
+            <Image src="/characters/dancer2.png" alt="" width={200} height={200} className="pointer-events-none absolute left-4 bottom-0 hidden w-36 animate-float md:block" />
+            <Image src="/characters/dancer2-reverse.png" alt="" width={200} height={200} className="pointer-events-none absolute right-4 bottom-0 hidden w-36 animate-float md:block" />
+          </>
+        )}
+        <div className="relative z-10">
+          <p className="font-display uppercase text-bongo-yellow text-xl">{dict.whatis.kicker}</p>
+          <h1 className="text-5xl sm:text-8xl text-white text-stroke">{about.title}</h1>
+          <p className="mx-auto mt-4 max-w-xl font-body text-white/90 text-lg">{about.intro}</p>
+        </div>
       </section>
 
       <Marquee items={dict.marquee} className="bg-bongo-yellow text-bongo-black" />

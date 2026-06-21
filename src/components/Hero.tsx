@@ -7,12 +7,34 @@ import ConfettiButton from "./ConfettiButton";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 
-const VIDEO = "https://www.bongosbingo.dk/wp-content/uploads/2026/01/promo-reel-nosound.mov";
+const DEFAULT_VIDEO = "https://www.bongosbingo.dk/wp-content/uploads/2026/01/promo-reel-nosound.mov";
+const DEFAULT_POSTER = "https://www.bongosbingo.dk/wp-content/uploads/2026/01/DSC07419-scaled-1-1024x683.jpg";
 
-export default function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export type HomeHero = {
+  badge?: string;
+  title1?: string;
+  title2?: string;
+  sub?: string;
+  cta?: string;
+  heroVideo?: string;
+  heroImage?: string;
+  heroHeight?: string;
+};
+
+export default function Hero({ locale, dict, hero }: { locale: Locale; dict: Dictionary; hero?: HomeHero }) {
   const base = `/${locale}`;
+  const badge = hero?.badge || dict.hero.badge;
+  const title1 = hero?.title1 || dict.hero.title1;
+  const title2 = hero?.title2 || dict.hero.title2;
+  const sub = hero?.sub || dict.hero.sub;
+  const cta = hero?.cta || dict.hero.cta;
+  const video = hero?.heroVideo?.trim() || DEFAULT_VIDEO;
+  const poster = hero?.heroImage?.trim() || DEFAULT_POSTER;
+  const hh = (hero?.heroHeight || "").trim();
+  const minHeight = hh && hh !== "auto" ? `${hh}vh` : "92vh";
+
   return (
-    <section className="relative min-h-[92vh] overflow-hidden bg-bongo-black">
+    <section className="relative overflow-hidden bg-bongo-black" style={{ minHeight }}>
       {/* background video */}
       <video
         className="absolute inset-0 h-full w-full object-cover opacity-50"
@@ -20,9 +42,9 @@ export default function Hero({ locale, dict }: { locale: Locale; dict: Dictionar
         muted
         loop
         playsInline
-        poster="https://www.bongosbingo.dk/wp-content/uploads/2026/01/DSC07419-scaled-1-1024x683.jpg"
+        poster={poster}
       >
-        <source src={VIDEO} type="video/mp4" />
+        <source src={video} />
       </video>
       <div className="absolute inset-0 bg-gradient-to-b from-bongo-black/40 via-bongo-pink/20 to-bongo-black" />
       <div className="bg-dots absolute inset-0 opacity-60" />
@@ -33,14 +55,17 @@ export default function Hero({ locale, dict }: { locale: Locale; dict: Dictionar
       <FloatChar src="/characters/blowey.png" className="left-[6%] bottom-[10%] w-20 sm:w-32" delay={1.1} />
       <FloatChar src="/characters/henry-hoover.png" className="right-[7%] bottom-[8%] w-20 sm:w-32" delay={0.3} />
 
-      <div className="relative z-10 mx-auto flex min-h-[92vh] max-w-5xl flex-col items-center justify-center px-5 text-center">
+      <div
+        className="relative z-10 mx-auto flex max-w-5xl flex-col items-center justify-center px-5 text-center"
+        style={{ minHeight }}
+      >
         <motion.span
           initial={{ scale: 0, rotate: -8 }}
           animate={{ scale: 1, rotate: -3 }}
           transition={{ type: "spring", stiffness: 200, damping: 12 }}
           className="mb-6 inline-block rounded-full border-4 border-bongo-black bg-bongo-yellow px-5 py-2 font-display uppercase text-bongo-black text-sm sm:text-base shadow-pop"
         >
-          ✦ {dict.hero.badge} ✦
+          ✦ {badge} ✦
         </motion.span>
 
         <motion.h1
@@ -49,8 +74,8 @@ export default function Hero({ locale, dict }: { locale: Locale; dict: Dictionar
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-5xl sm:text-7xl lg:text-8xl"
         >
-          <span className="block text-white text-stroke">{dict.hero.title1}</span>
-          <span className="block disco-text">{dict.hero.title2}</span>
+          <span className="block text-white text-stroke">{title1}</span>
+          <span className="block disco-text">{title2}</span>
         </motion.h1>
 
         <motion.p
@@ -59,7 +84,7 @@ export default function Hero({ locale, dict }: { locale: Locale; dict: Dictionar
           transition={{ duration: 0.6, delay: 0.25 }}
           className="mt-6 max-w-2xl font-body text-base sm:text-lg text-white/90"
         >
-          {dict.hero.sub}
+          {sub}
         </motion.p>
 
         <motion.div
@@ -69,7 +94,7 @@ export default function Hero({ locale, dict }: { locale: Locale; dict: Dictionar
           className="mt-9 flex flex-col items-center gap-4 sm:flex-row"
         >
           <ConfettiButton className="btn-pink text-lg" href={`${base}/events`}>
-            🎟️ {dict.hero.cta}
+            🎟️ {cta}
           </ConfettiButton>
           <Link href={`${base}/events`} className="btn-white text-lg">
             {dict.hero.cta2}
