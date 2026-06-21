@@ -20,6 +20,9 @@ const ICONS: Record<string, React.ReactNode> = {
   doc: (
     <path d="M6 3h8l4 4v14H6V3Zm8 0v4h4M9 12h6M9 16h6" />
   ),
+  media: (
+    <path d="M4 5h16v14H4V5Zm0 11 5-5 4 4 3-3 4 4M15.5 9a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
+  ),
   logout: (
     <path d="M15 12H4m0 0 3.5-3.5M4 12l3.5 3.5M14 5h5v14h-5" />
   ),
@@ -39,6 +42,7 @@ const NAV = [
   { href: "/admin/subscribers", label: "Nyhedsbrev", icon: "mail" },
   { href: "/admin/messages", label: "Beskeder", icon: "chat" },
   { href: "/admin/content", label: "Indhold", icon: "doc" },
+  { href: "/admin/media", label: "Medier", icon: "media" },
 ];
 
 export default function AdminSidebar({ email }: { email: string }) {

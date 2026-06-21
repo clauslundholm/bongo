@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { saveContent, type FormState } from "@/app/admin/actions";
 import { TextField, TextArea } from "./AdminFields";
+import MediaField from "./MediaField";
 
 function str(v: unknown): string {
   return typeof v === "string" ? v : "";
@@ -42,15 +43,14 @@ export default function EventsHeroForm({
 
       <div className="pp-card space-y-4 p-5">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-admin-muted">Baggrund (hero)</h3>
-        <TextField label="Baggrundsvideo URL (.mp4 / .webm)" value={f.heroVideo} onChange={set("heroVideo")} />
-        <TextField label="Baggrundsbillede URL (vises hvis ingen video)" value={f.heroImage} onChange={set("heroImage")} />
-        <p className="text-xs text-admin-muted">Tom video = standard-udseende. Videoen afspilles automatisk, lydløst og i loop.</p>
-        {f.heroVideo ? (
-          <video src={f.heroVideo} muted loop autoPlay playsInline className="aspect-video w-full max-w-md rounded-xl border border-admin-line object-cover" />
-        ) : f.heroImage ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={f.heroImage} alt="" className="aspect-video w-full max-w-md rounded-xl border border-admin-line object-cover" />
-        ) : null}
+        <MediaField
+          label="Baggrundsvideo"
+          accept="video"
+          value={f.heroVideo}
+          onChange={set("heroVideo")}
+          hint="Tom video = standard-udseende. Afspilles automatisk, lydløst og i loop."
+        />
+        <MediaField label="Baggrundsbillede (fallback / poster)" accept="image" value={f.heroImage} onChange={set("heroImage")} />
       </div>
 
       {state.error && <p className="rounded-xl border border-admin-line bg-admin-peach px-4 py-3 text-sm text-admin-peach-text">⚠️ {state.error}</p>}

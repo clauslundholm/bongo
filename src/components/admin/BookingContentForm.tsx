@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { saveContent, type FormState } from "@/app/admin/actions";
 import { TextField, TextArea, IconBtn } from "./AdminFields";
+import MediaField from "./MediaField";
 
 type Block = { title: string; paragraphsText: string; listText: string };
 type RawBlock = { title?: string; paragraphs?: string[]; list?: string[] };
@@ -93,15 +94,19 @@ export default function BookingContentForm({
 
       <div className="pp-card space-y-4 p-5">
         <h3 className="text-sm font-semibold uppercase tracking-wide text-admin-muted">Baggrund (hero)</h3>
-        <TextField label="Baggrundsvideo URL (.mp4 / .webm)" value={meta.heroVideo} onChange={(v) => setMeta({ ...meta, heroVideo: v })} />
-        <TextField label="Baggrundsbillede URL (vises hvis ingen video)" value={meta.heroImage} onChange={(v) => setMeta({ ...meta, heroImage: v })} />
-        <p className="text-xs text-admin-muted">Tom video = brug billede. Videoen afspilles automatisk, lydløst og i loop som baggrund.</p>
-        {meta.heroVideo ? (
-          <video src={meta.heroVideo} muted loop autoPlay playsInline className="aspect-video w-full max-w-md rounded-xl border border-admin-line object-cover" />
-        ) : meta.heroImage ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={meta.heroImage} alt="" className="aspect-video w-full max-w-md rounded-xl border border-admin-line object-cover" />
-        ) : null}
+        <MediaField
+          label="Baggrundsvideo"
+          accept="video"
+          value={meta.heroVideo}
+          onChange={(v) => setMeta({ ...meta, heroVideo: v })}
+          hint="Tom video = brug billede. Afspilles automatisk, lydløst og i loop."
+        />
+        <MediaField
+          label="Baggrundsbillede (fallback / poster)"
+          accept="image"
+          value={meta.heroImage}
+          onChange={(v) => setMeta({ ...meta, heroImage: v })}
+        />
       </div>
 
       <div className="space-y-4">

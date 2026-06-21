@@ -65,6 +65,38 @@ export async function adminGetContent(key: string, locale: string): Promise<unkn
   return data?.data ?? null;
 }
 
+export const MEDIA_BUCKET = "media";
+
+export interface MediaItem {
+  name: string;
+  url: string;
+  size: number;
+  mimetype: string;
+  createdAt: string;
+}
+
+export async function adminListMedia(): Promise<MediaItem[]> {
+  const sb = createSupabaseAdminClient();
+  if (!sb) return [];
+  const { data, error } = await sb.storage.from(MEDIA_BUCKET).list("", {
+    limit: 500,
+    sortBy: { column: "created_at", order: "desc" },
+  });
+  if (error || !data) return [];
+  return data
+    .filter((o) => o.id) // skip folder placeholders
+    .map((o) => {
+      const meta = (o.metadata ?? {}) as { size?: number; mimetype?: string };
+      return {
+        name: o.name,
+        url: sb.storage.from(MEDIA_BUCKET).getPublicUrl(o.name).data.publicUrl,
+        size: meta.size ?? 0,
+        mimetype: meta.mimetype ?? "",
+        createdAt: o.created_at ?? "",
+      };
+    });
+}
+
 export async function adminCounts() {
   const sb = createSupabaseAdminClient();
   if (!sb) return { events: 0, subscribers: 0, messages: 0, unhandled: 0 };

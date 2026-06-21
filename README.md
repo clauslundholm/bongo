@@ -84,7 +84,7 @@ Sitet kan køre i to tilstande:
 ### Sådan slår du Supabase til
 
 1. Opret et projekt på [supabase.com](https://supabase.com).
-2. Åbn **SQL Editor** og kør hele `supabase/migrations/0001_init.sql` (opretter tabeller, RLS og seed-data).
+2. Åbn **SQL Editor** og kør `supabase/migrations/0001_init.sql` (tabeller, RLS, seed) og derefter `0002_storage.sql` (mediebibliotek-bucket).
 3. Kopiér `.env.example` → `.env.local` og udfyld:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Project Settings → API)
    - `SUPABASE_SERVICE_ROLE_KEY` (samme side — **kun server, hold hemmelig**)
@@ -97,7 +97,8 @@ Sitet kan køre i to tilstande:
 - **Shows** — opret, rediger, slet, og udgiv/skjul events (CRUD).
 - **Nyhedsbrev** — se tilmeldte og eksportér som CSV.
 - **Beskeder** — læs kontaktbeskeder, markér som læst.
-- **Indhold** — rediger sidetekster (om / virksomheder / festivaller / how-to-bingo) pr. sprog som JSON. Tomt = standardtekst fra ordbogen.
+- **Indhold** — rediger sidetekster pr. sprog i rigtige formularfelter (vælg sprog først; hvert sprog er uafhængigt). Inkl. baggrundsvideo/-billede i hero på Events & Festivaller, Virksomheder, How-to-Bingo og Shows.
+- **Medier** — mediebibliotek på Supabase Storage: upload billeder/video, omdøb, slet, kopiér URL. Vælg medier direkte i indholds- og show-formularerne via "Bibliotek".
 
 Login bruger Supabase Auth (email/password) og er låst til `ADMIN_EMAILS`. Skrivninger går via service-role-nøglen server-side; offentlige læsninger er beskyttet af RLS (kun udgivne events).
 

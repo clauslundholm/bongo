@@ -140,6 +140,73 @@ export async function resetContent(form: FormData) {
   revalidatePath("/admin/content");
 }
 
+/* ───────────────── Media library ───────────────── */
+
+const MEDIA_BUCKET = "media";
+
+function safeFileBase(name: string) {
+  return name
+    .normalize("NFKD")
+    .replace(/[^\w.\- ]+/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .toLowerCase()
+    .slice(0, 80) || "fil";
+}
+
+export async function uploadMedia(_prev: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return { error: "Supabase er ikke konfigureret." };
+
+  const files = form.getAll("file").filter((f): f is File => f instanceof File && f.size > 0);
+  if (files.length === 0) return { error: "Vælg mindst én fil." };
+
+  for (const file of files) {
+    const dot = file.name.lastIndexOf(".");
+    const ext = dot >= 0 ? file.name.slice(dot + 1).toLowerCase() : "";
+    const base = safeFileBase(dot >= 0 ? file.name.slice(0, dot) : file.name);
+    const path = `${Date.now()}-${base}${ext ? "." + ext : ""}`;
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const { error } = await sb.storage.from(MEDIA_BUCKET).upload(path, bytes, {
+      contentType: file.type || undefined,
+      upsert: false,
+    });
+    if (error) return { error: error.message };
+  }
+
+  revalidatePath("/admin/media");
+  return { ok: true };
+}
+
+export async function deleteMedia(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const name = String(form.get("name") ?? "").trim();
+  if (name) await sb.storage.from(MEDIA_BUCKET).remove([name]);
+  revalidatePath("/admin/media");
+}
+
+export async function renameMedia(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const from = String(form.get("from") ?? "").trim();
+  let to = String(form.get("to") ?? "").trim();
+  if (!from || !to) return;
+
+  // keep original extension if the new name dropped it
+  const fromDot = from.lastIndexOf(".");
+  const fromExt = fromDot >= 0 ? from.slice(fromDot) : "";
+  const toDot = to.lastIndexOf(".");
+  const toBase = toDot >= 0 ? to.slice(0, toDot) : to;
+  to = safeFileBase(toBase) + (toDot >= 0 ? to.slice(toDot) : fromExt);
+
+  if (from !== to) await sb.storage.from(MEDIA_BUCKET).move(from, to);
+  revalidatePath("/admin/media");
+}
+
 export async function signOut() {
   const supabase = await createSupabaseServerClient();
   if (supabase) await supabase.auth.signOut();

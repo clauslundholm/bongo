@@ -1,15 +1,17 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { saveEvent, type FormState } from "@/app/admin/actions";
 import type { EventRow } from "@/lib/data/events";
+import MediaField from "./MediaField";
 
 const STATUSES = ["onsale", "fewleft", "soldout", "new"];
 const ACCENTS = ["pink", "yellow", "cyan", "purple"];
 
 export default function EventForm({ event }: { event?: EventRow | null }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveEvent, {});
+  const [image, setImage] = useState(event?.image ?? "");
 
   return (
     <form action={action} className="max-w-3xl space-y-5">
@@ -32,7 +34,9 @@ export default function EventForm({ event }: { event?: EventRow | null }) {
         <Select name="status" label="Status" options={STATUSES} defaultValue={event?.status ?? "onsale"} />
         <Select name="accent" label="Farve" options={ACCENTS} defaultValue={event?.accent ?? "pink"} />
         <Field name="ticket_url" label="Billet-link (Paylogic)" defaultValue={event?.ticket_url} className="sm:col-span-2" />
-        <Field name="image" label="Billede-URL" defaultValue={event?.image} className="sm:col-span-2" />
+        <div className="sm:col-span-2">
+          <MediaField label="Billede" accept="image" value={image} onChange={setImage} name="image" />
+        </div>
       </div>
 
       <label className="flex items-center gap-3">
