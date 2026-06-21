@@ -11,8 +11,8 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
 
   return (
     <div>
-      <h1 className="font-display text-4xl uppercase text-bongo-black">Rediger show</h1>
-      <p className="mt-2 font-body text-bongo-black/70">{event.city} · {event.event_date}</p>
+      <h1 className="text-3xl font-bold text-admin-ink">Rediger show</h1>
+      <p className="mt-1 text-admin-muted">{event.city} · {event.event_date}</p>
       <div className="mt-8">
         <EventForm event={event} />
       </div>

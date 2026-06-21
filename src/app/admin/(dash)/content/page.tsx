@@ -1,21 +1,31 @@
 import Link from "next/link";
-import ContentEditor from "@/components/admin/ContentEditor";
-import { resetContent } from "../../actions";
+import { cookies } from "next/headers";
+import BookingContentForm from "@/components/admin/BookingContentForm";
+import AboutContentForm from "@/components/admin/AboutContentForm";
+import EventsHeroForm from "@/components/admin/EventsHeroForm";
+import { setContentLocale, resetContent } from "../../actions";
 import { adminGetContent } from "@/lib/admin-data";
 import { getDictionary } from "@/i18n/dictionaries";
-import { locales, isLocale, type Locale } from "@/i18n/config";
+import { locales, localeNames, localeFlags, isLocale, type Locale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 
-const KEYS = ["about", "corp", "fest", "howto"] as const;
-type Key = (typeof KEYS)[number];
+const KEYS = [
+  { id: "about", label: "Hvad er Bongo's" },
+  { id: "howto", label: "How to Bingo" },
+  { id: "fest", label: "Events & Festivaller" },
+  { id: "corp", label: "Virksomheder" },
+  { id: "events", label: "Shows (hero)" },
+] as const;
+type Key = (typeof KEYS)[number]["id"];
 
 function fallbackFor(key: Key, locale: Locale) {
   const dict = getDictionary(locale);
   if (key === "about") return dict.about;
   if (key === "corp") return dict.corp;
   if (key === "fest") return dict.fest;
-  return dict.howto;
+  if (key === "howto") return dict.howto;
+  return { kicker: dict.upcoming.kicker, title: dict.upcoming.title, sub: dict.upcoming.sub, heroVideo: "", heroImage: "" };
 }
 
 export default async function ContentPage({
@@ -24,57 +34,86 @@ export default async function ContentPage({
   searchParams: Promise<{ key?: string; locale?: string }>;
 }) {
   const sp = await searchParams;
-  const key: Key = (KEYS as readonly string[]).includes(sp.key ?? "") ? (sp.key as Key) : "about";
-  const locale: Locale = isLocale(sp.locale ?? "") ? (sp.locale as Locale) : "da";
+  const cookieStore = await cookies();
+  const cookieLocale = cookieStore.get("admin_locale")?.value;
+
+  const key: Key = KEYS.some((k) => k.id === sp.key) ? (sp.key as Key) : "about";
+  const locale: Locale = isLocale(sp.locale ?? "")
+    ? (sp.locale as Locale)
+    : isLocale(cookieLocale ?? "")
+    ? (cookieLocale as Locale)
+    : "da";
 
   const override = await adminGetContent(key, locale);
-  const current = override ?? fallbackFor(key, locale);
-  const json = JSON.stringify(current, null, 2);
+  const current = (override ?? fallbackFor(key, locale)) as Record<string, unknown>;
 
   return (
     <div>
-      <h1 className="font-display text-4xl uppercase text-bongo-black">Indhold</h1>
-      <p className="mt-2 max-w-2xl font-body text-bongo-black/70">
-        Rediger sidetekster pr. sprog. Tomt felt = standardtekst fra ordbogen.
-        Gem som JSON — strukturen skal matche den viste.
+      <h1 className="text-3xl font-bold text-admin-ink">Indhold</h1>
+      <p className="mt-1 max-w-2xl text-admin-muted">
+        Hvert sprog redigeres helt for sig — indholdet behøver ikke være ens på tværs af sprog.
       </p>
 
-      <div className="mt-6 space-y-3">
-        <div className="flex flex-wrap gap-2">
-          {KEYS.map((k) => (
-            <Link
-              key={k}
-              href={`/admin/content?key=${k}&locale=${locale}`}
-              className={`rounded-full border-2 border-bongo-black px-4 py-1.5 font-display text-xs uppercase ${k === key ? "bg-bongo-pink text-white" : "bg-white"}`}
-            >
-              {k}
-            </Link>
-          ))}
-        </div>
+      {/* Language selector — primary control */}
+      <div className="pp-card mt-6 p-4">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-admin-muted">Redigerer sprog</p>
         <div className="flex flex-wrap gap-2">
           {locales.map((l) => (
-            <Link
-              key={l}
-              href={`/admin/content?key=${key}&locale=${l}`}
-              className={`rounded-full border-2 border-bongo-black px-4 py-1.5 font-display text-xs uppercase ${l === locale ? "bg-bongo-cyan" : "bg-white"}`}
-            >
-              {l}
-            </Link>
+            <form key={l} action={setContentLocale}>
+              <input type="hidden" name="key" value={key} />
+              <input type="hidden" name="locale" value={l} />
+              <button
+                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                  l === locale
+                    ? "border-admin-ink bg-admin-ink text-white"
+                    : "border-admin-line bg-white text-admin-ink hover:bg-admin-panel"
+                }`}
+              >
+                <span>{localeFlags[l]}</span>
+                {localeNames[l]}
+              </button>
+            </form>
           ))}
         </div>
       </div>
 
-      <div className="mt-6">
-        <ContentEditor contentKey={key} locale={locale} initialJson={json} isOverridden={Boolean(override)} />
+      {/* Page selector (keeps current language) */}
+      <div className="mt-5 flex flex-wrap gap-2">
+        {KEYS.map((k) => (
+          <Link
+            key={k.id}
+            href={`/admin/content?key=${k.id}&locale=${locale}`}
+            className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+              k.id === key
+                ? "border-admin-yellow bg-admin-yellow text-admin-ink"
+                : "border-admin-line bg-white text-admin-ink hover:bg-admin-panel"
+            }`}
+          >
+            {k.label}
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-3 flex items-center gap-2 text-sm text-admin-muted">
+        <span className="pp-badge pp-badge-new">{localeFlags[locale]} {localeNames[locale]}</span>
+        <span>{override ? "Tilpasset for dette sprog" : "Viser standardtekst — gem for at tilpasse dette sprog"}</span>
+      </div>
+
+      <div className="mt-5">
+        {key === "about" ? (
+          <AboutContentForm contentKey={key} locale={locale} initial={current} />
+        ) : key === "events" ? (
+          <EventsHeroForm locale={locale} initial={current} />
+        ) : (
+          <BookingContentForm contentKey={key} locale={locale} initial={current} />
+        )}
       </div>
 
       {override != null && (
         <form action={resetContent} className="mt-4">
           <input type="hidden" name="key" value={key} />
           <input type="hidden" name="locale" value={locale} />
-          <button className="rounded-xl border-2 border-bongo-black bg-white px-4 py-2 font-display text-xs uppercase hover:bg-bongo-yellow">
-            Nulstil til standardtekst
-          </button>
+          <button className="pp-btn-ghost px-4 py-2 text-xs">Nulstil {localeNames[locale]} til standardtekst</button>
         </form>
       )}
     </div>

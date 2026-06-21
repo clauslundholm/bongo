@@ -9,34 +9,36 @@ export default async function SubscribersPage() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="font-display text-4xl uppercase text-bongo-black">Nyhedsbrev</h1>
-        <a href="/api/admin/subscribers.csv" className="btn-white">⬇︎ Eksportér CSV</a>
+        <div>
+          <h1 className="text-3xl font-bold text-admin-ink">Nyhedsbrev</h1>
+          <p className="mt-1 text-admin-muted">{subs.length} tilmeldte</p>
+        </div>
+        <a href="/api/admin/subscribers.csv" className="pp-btn-ghost">⬇︎ Eksportér CSV</a>
       </div>
-      <p className="mt-2 font-body text-bongo-black/70">{subs.length} tilmeldte</p>
 
-      <div className="mt-8 overflow-hidden rounded-3xl border-4 border-bongo-black bg-white shadow-pop">
-        <table className="w-full text-left font-body text-sm">
-          <thead className="bg-bongo-yellow font-display text-xs uppercase">
-            <tr>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Sprog</th>
-              <th className="px-4 py-3">Tilmeldt</th>
-              <th className="px-4 py-3 text-right"></th>
+      <div className="pp-card mt-7 overflow-hidden">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-admin-line text-xs font-semibold uppercase tracking-wide text-admin-muted">
+              <th className="px-5 py-4">Email</th>
+              <th className="px-5 py-4">Sprog</th>
+              <th className="px-5 py-4">Tilmeldt</th>
+              <th className="px-5 py-4 text-right"></th>
             </tr>
           </thead>
           <tbody>
             {subs.length === 0 && (
-              <tr><td colSpan={4} className="px-4 py-8 text-center text-bongo-black/60">Ingen tilmeldte endnu.</td></tr>
+              <tr><td colSpan={4} className="px-5 py-10 text-center text-admin-muted">Ingen tilmeldte endnu.</td></tr>
             )}
             {subs.map((s) => (
-              <tr key={s.id} className="border-t-2 border-bongo-black/10">
-                <td className="px-4 py-3 font-display">{s.email}</td>
-                <td className="px-4 py-3 uppercase">{s.locale ?? "—"}</td>
-                <td className="px-4 py-3 text-bongo-black/60">{new Date(s.created_at).toLocaleString("da-DK")}</td>
-                <td className="px-4 py-3 text-right">
+              <tr key={s.id} className="border-b border-admin-line/70 last:border-0 hover:bg-admin-panel/60">
+                <td className="px-5 py-4 font-semibold text-admin-ink">{s.email}</td>
+                <td className="px-5 py-4 uppercase text-admin-muted">{s.locale ?? "—"}</td>
+                <td className="px-5 py-4 text-admin-muted">{new Date(s.created_at).toLocaleString("da-DK")}</td>
+                <td className="px-5 py-4 text-right">
                   <form action={deleteSubscriber}>
                     <input type="hidden" name="id" value={s.id} />
-                    <button className="rounded-lg border-2 border-bongo-black px-3 py-1 font-display text-xs uppercase hover:bg-bongo-pink hover:text-white">
+                    <button className="rounded-full border border-admin-line bg-white px-3.5 py-1.5 text-xs font-semibold text-admin-peach-text transition hover:bg-admin-peach">
                       Slet
                     </button>
                   </form>

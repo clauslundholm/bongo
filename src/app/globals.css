@@ -117,3 +117,37 @@
 /* hide scrollbar for marquees */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─────────────── ProfitPulse-style admin UI ─────────────── */
+@layer components {
+  .pp-card {
+    @apply rounded-2xl border border-admin-line bg-admin-card;
+    box-shadow: 0 1px 2px rgba(20, 22, 28, 0.04), 0 12px 30px -16px rgba(20, 22, 28, 0.18);
+  }
+  .pp-input {
+    @apply w-full rounded-xl border border-admin-line bg-white px-3.5 py-2.5 text-sm text-admin-ink outline-none
+      transition placeholder:text-admin-muted focus:border-admin-ink/40 focus:ring-4 focus:ring-admin-ink/5;
+  }
+  .pp-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-admin-line bg-white px-4 py-2 text-sm font-medium text-admin-ink;
+  }
+  .pp-btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-admin-ink px-5 py-2.5 text-sm font-semibold text-white
+      transition hover:bg-black disabled:opacity-60;
+  }
+  .pp-btn-yellow {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-admin-yellow px-5 py-2.5 text-sm font-semibold text-admin-ink
+      transition hover:brightness-95 disabled:opacity-60;
+  }
+  .pp-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-admin-line bg-white px-5 py-2.5 text-sm font-semibold text-admin-ink
+      transition hover:bg-admin-panel;
+  }
+  .pp-badge {
+    @apply inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-semibold;
+  }
+  .pp-badge-paid { @apply bg-admin-yellow-soft text-admin-yellow-text; }
+  .pp-badge-delivered { @apply bg-admin-peach text-admin-peach-text; }
+  .pp-badge-completed { @apply bg-admin-green text-admin-green-text; }
+  .pp-badge-new { @apply bg-admin-ink text-white; }
+}

@@ -1,6 +1,6 @@
 import { createSupabaseReadClient } from "@/lib/supabase/read";
 
-export type ContentKey = "about" | "corp" | "fest" | "howto";
+export type ContentKey = "about" | "corp" | "fest" | "howto" | "events";
 
 /**
  * Returns the DB override for (key, locale) if present and non-empty,

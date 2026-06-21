@@ -48,56 +48,59 @@ export default function LoginForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-5">
-      <div className="w-full max-w-md rounded-3xl border-4 border-bongo-black bg-white p-8 shadow-pop">
-        <Link href="/da" className="font-display text-sm uppercase text-bongo-pink hover:underline">
+      <div className="pp-card w-full max-w-md p-8">
+        <Link href="/da" className="text-sm font-medium text-admin-muted hover:text-admin-ink">
           ← Bongo&apos;s Bingo
         </Link>
-        <h1 className="mt-3 font-display text-4xl uppercase text-bongo-black">Admin login</h1>
+        <div className="mt-4 flex items-center gap-2.5">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-admin-yellow text-admin-ink">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 12h3l2-6 4 13 3-9 2 2h4" />
+            </svg>
+          </span>
+          <h1 className="text-2xl font-bold text-admin-ink">Bongo Admin</h1>
+        </div>
 
         {forbidden && (
-          <div className="mt-6 rounded-2xl border-2 border-bongo-black bg-bongo-pink p-4 font-body text-sm text-white">
+          <div className="mt-6 rounded-xl border border-admin-line bg-admin-peach p-4 text-sm text-admin-peach-text">
             <p>
               {forbiddenEmail ? <strong>{forbiddenEmail}</strong> : "Din bruger"} er logget ind, men er ikke på
-              admin-listen. Tilføj emailen til <code>ADMIN_EMAILS</code> i <code>.env.local</code> og genstart serveren.
+              admin-listen. Tilføj emailen til <code className="rounded bg-white/60 px-1">ADMIN_EMAILS</code> og genstart serveren.
             </p>
-            <button onClick={signOutAndRetry} className="mt-3 rounded-lg border-2 border-bongo-black bg-white px-3 py-1 font-display text-xs uppercase text-bongo-black">
+            <button onClick={signOutAndRetry} className="pp-btn-ghost mt-3 px-3 py-1.5 text-xs">
               Log ud og prøv en anden konto
             </button>
           </div>
         )}
 
         {!isSupabaseConfigured ? (
-          <p className="mt-6 rounded-2xl border-2 border-bongo-black bg-bongo-yellow p-4 font-body text-sm">
+          <p className="mt-6 rounded-xl border border-admin-line bg-admin-yellow-soft p-4 text-sm text-admin-yellow-text">
             Supabase er ikke konfigureret endnu. Tilføj miljøvariabler i <code>.env.local</code> og genstart.
           </p>
         ) : (
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <label className="block">
-              <span className="font-display text-sm uppercase">Email</span>
+              <span className="text-sm font-medium text-admin-ink">Email</span>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-2xl border-4 border-bongo-black px-4 py-3 outline-none focus:ring-4 focus:ring-bongo-pink"
+                className="pp-input mt-1.5 py-3"
               />
             </label>
             <label className="block">
-              <span className="font-display text-sm uppercase">Adgangskode</span>
+              <span className="text-sm font-medium text-admin-ink">Adgangskode</span>
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full rounded-2xl border-4 border-bongo-black px-4 py-3 outline-none focus:ring-4 focus:ring-bongo-pink"
+                className="pp-input mt-1.5 py-3"
               />
             </label>
-            {error && <p className="font-body text-sm text-bongo-pink-deep">⚠️ {error}</p>}
-            <button
-              type="submit"
-              disabled={pending}
-              className="btn-pink w-full text-lg disabled:opacity-60"
-            >
+            {error && <p className="text-sm text-admin-peach-text">⚠️ {error}</p>}
+            <button type="submit" disabled={pending} className="pp-btn-dark w-full py-3 text-base">
               {pending ? "…" : "Log ind"}
             </button>
           </form>

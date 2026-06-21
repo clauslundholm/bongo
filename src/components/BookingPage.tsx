@@ -14,6 +14,8 @@ type Data = {
   intro: string;
   cta: string;
   blocks: Section[];
+  heroVideo?: string;
+  heroImage?: string;
 };
 
 const CHARS = ["strong-duck", "dancer2", "dancer1", "unicorn", "blowey", "henry-hoover", "host", "69-ball"];
@@ -35,18 +37,40 @@ export default function BookingPage({
   heroImage?: string;
 }) {
   const contactHref = ctaHref ?? `/${locale}/kontakt`;
+  const heroVideo = data.heroVideo?.trim();
+  const effectiveImage = data.heroImage?.trim() || heroImage;
 
   return (
     <>
-      <section className="relative overflow-hidden bg-bongo-black bg-dots pt-16 pb-16 px-5 sm:px-8">
-        <Image
-          src={`/characters/${heroChar}.png`}
-          alt=""
-          width={260}
-          height={260}
-          className="pointer-events-none absolute -right-2 bottom-0 hidden w-48 animate-float md:block"
-        />
-        <div className="mx-auto max-w-4xl text-center">
+      <section className="relative overflow-hidden bg-bongo-black pt-16 pb-16 px-5 sm:px-8">
+        {heroVideo ? (
+          <>
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={effectiveImage}
+              className="absolute inset-0 h-full w-full object-cover opacity-45"
+            >
+              <source src={heroVideo} />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-b from-bongo-black/55 via-bongo-pink/15 to-bongo-black" />
+          </>
+        ) : (
+          <>
+            <div className="bg-dots absolute inset-0" />
+            <Image
+              src={`/characters/${heroChar}.png`}
+              alt=""
+              width={260}
+              height={260}
+              className="pointer-events-none absolute -right-2 bottom-0 hidden w-48 animate-float md:block"
+            />
+          </>
+        )}
+
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
           <p className="font-display uppercase text-bongo-pink text-xl">{data.kicker}</p>
           <h1 className="text-5xl sm:text-8xl text-white text-stroke-white">{data.title}</h1>
           <p className="mx-auto mt-5 max-w-2xl font-display uppercase text-bongo-yellow text-lg sm:text-2xl">
@@ -61,9 +85,9 @@ export default function BookingPage({
             </Link>
           </div>
 
-          {heroImage && (
+          {!heroVideo && effectiveImage && (
             <div className="mx-auto mt-10 max-w-3xl">
-              <PhotoFrame src={heroImage} alt={data.title} ratio="aspect-[16/9]" rotate="-rotate-1" />
+              <PhotoFrame src={effectiveImage} alt={data.title} ratio="aspect-[16/9]" rotate="-rotate-1" />
             </div>
           )}
         </div>

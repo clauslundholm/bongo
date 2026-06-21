@@ -8,38 +8,36 @@ export default async function MessagesPage() {
 
   return (
     <div>
-      <h1 className="font-display text-4xl uppercase text-bongo-black">Beskeder</h1>
-      <p className="mt-2 font-body text-bongo-black/70">{messages.length} kontaktbeskeder</p>
+      <h1 className="text-3xl font-bold text-admin-ink">Beskeder</h1>
+      <p className="mt-1 text-admin-muted">{messages.length} kontaktbeskeder</p>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-7 space-y-4">
         {messages.length === 0 && (
-          <p className="rounded-3xl border-4 border-bongo-black bg-white p-8 text-center font-body text-bongo-black/60 shadow-pop">
-            Ingen beskeder endnu.
-          </p>
+          <p className="pp-card p-8 text-center text-admin-muted">Ingen beskeder endnu.</p>
         )}
         {messages.map((m) => (
-          <div
-            key={m.id}
-            className={`rounded-3xl border-4 border-bongo-black p-5 shadow-pop ${m.handled ? "bg-white" : "bg-bongo-yellow"}`}
-          >
+          <div key={m.id} className={`pp-card p-5 ${m.handled ? "" : "ring-2 ring-admin-yellow"}`}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="font-display text-lg uppercase">{m.name}</p>
-                <a href={`mailto:${m.email}`} className="font-body text-sm text-bongo-pink-deep underline">{m.email}</a>
-                {m.subject && <p className="mt-1 font-display text-sm uppercase text-bongo-black/70">{m.subject}</p>}
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-bold text-admin-ink">{m.name}</p>
+                  {!m.handled && <span className="pp-badge pp-badge-paid">Ny</span>}
+                </div>
+                <a href={`mailto:${m.email}`} className="text-sm text-admin-muted underline hover:text-admin-ink">{m.email}</a>
+                {m.subject && <p className="mt-1 text-sm font-medium text-admin-ink/80">{m.subject}</p>}
               </div>
               <div className="text-right">
-                <p className="font-body text-xs text-bongo-black/60">{new Date(m.created_at).toLocaleString("da-DK")}</p>
+                <p className="text-xs text-admin-muted">{new Date(m.created_at).toLocaleString("da-DK")}</p>
                 <form action={toggleMessageHandled} className="mt-2">
                   <input type="hidden" name="id" value={m.id} />
                   <input type="hidden" name="handled" value={(!m.handled).toString()} />
-                  <button className="rounded-lg border-2 border-bongo-black bg-white px-3 py-1 font-display text-xs uppercase hover:bg-bongo-pink hover:text-white">
+                  <button className="pp-btn-ghost px-3.5 py-1.5 text-xs">
                     {m.handled ? "Markér ulæst" : "Markér læst"}
                   </button>
                 </form>
               </div>
             </div>
-            <p className="mt-4 whitespace-pre-wrap font-body text-bongo-black/80">{m.message}</p>
+            <p className="mt-4 whitespace-pre-wrap text-admin-ink/80">{m.message}</p>
           </div>
         ))}
       </div>

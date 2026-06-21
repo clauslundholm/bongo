@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { getAdminUser } from "@/lib/auth";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -117,6 +118,15 @@ export async function saveContent(_prev: FormState, form: FormData): Promise<For
 
   revalidatePublic();
   return { ok: true };
+}
+
+export async function setContentLocale(form: FormData) {
+  await requireAdmin();
+  const locale = String(form.get("locale") ?? "da").trim();
+  const key = String(form.get("key") ?? "about").trim();
+  const cookieStore = await cookies();
+  cookieStore.set("admin_locale", locale, { path: "/", maxAge: 60 * 60 * 24 * 365 });
+  redirect(`/admin/content?key=${key}&locale=${locale}`);
 }
 
 export async function resetContent(form: FormData) {

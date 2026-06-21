@@ -35,27 +35,27 @@ export default function EventForm({ event }: { event?: EventRow | null }) {
         <Field name="image" label="Billede-URL" defaultValue={event?.image} className="sm:col-span-2" />
       </div>
 
-      <label className="flex items-center gap-3 font-body">
+      <label className="flex items-center gap-3">
         <input
           type="checkbox"
           name="published"
           defaultChecked={event ? event.published : true}
-          className="h-5 w-5 rounded border-2 border-bongo-black"
+          className="h-5 w-5 rounded-md border border-admin-line accent-admin-ink"
         />
-        <span className="font-display text-sm uppercase">Offentliggjort (vises på siden)</span>
+        <span className="text-sm font-medium text-admin-ink">Offentliggjort (vises på siden)</span>
       </label>
 
       {state.error && (
-        <p className="rounded-2xl border-2 border-bongo-black bg-bongo-pink px-4 py-3 font-body text-sm text-white">
+        <p className="rounded-xl border border-admin-line bg-admin-peach px-4 py-3 text-sm text-admin-peach-text">
           ⚠️ {state.error}
         </p>
       )}
 
       <div className="flex gap-3">
-        <button type="submit" disabled={pending} className="btn-pink disabled:opacity-60">
+        <button type="submit" disabled={pending} className="pp-btn-dark">
           {pending ? "Gemmer…" : event?.id ? "Gem ændringer" : "Opret show"}
         </button>
-        <Link href="/admin/events" className="btn-white">Annullér</Link>
+        <Link href="/admin/events" className="pp-btn-ghost">Annullér</Link>
       </div>
     </form>
   );
@@ -68,14 +68,14 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="font-display text-xs uppercase text-bongo-black/70">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-wide text-admin-muted">{label}</span>
       <input
         name={name}
         type={type}
         required={required}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        className="mt-1 w-full rounded-xl border-2 border-bongo-black bg-white px-3 py-2 font-body outline-none focus:ring-4 focus:ring-bongo-pink"
+        className="pp-input mt-1.5"
       />
     </label>
   );
@@ -88,11 +88,11 @@ function Select({
 }) {
   return (
     <label className="block">
-      <span className="font-display text-xs uppercase text-bongo-black/70">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-wide text-admin-muted">{label}</span>
       <select
         name={name}
         defaultValue={defaultValue}
-        className="mt-1 w-full rounded-xl border-2 border-bongo-black bg-white px-3 py-2 font-body outline-none focus:ring-4 focus:ring-bongo-pink"
+        className="pp-input mt-1.5"
       >
         {options.map((o) => (
           <option key={o} value={o}>{o}</option>

@@ -16,6 +16,23 @@ const config: Config = {
           purple: "#7A1FFF",
           cyan: "#00E5FF",
         },
+        // ProfitPulse-style admin palette
+        admin: {
+          bg: "#C9B79C",
+          ink: "#15181E",
+          ink2: "#1E222A",
+          panel: "#F4F2ED",
+          card: "#FFFFFF",
+          line: "#E8E5DD",
+          muted: "#8C8A84",
+          yellow: "#F4D03F",
+          "yellow-soft": "#FBEFBE",
+          "yellow-text": "#7A6A12",
+          peach: "#F8D6B6",
+          "peach-text": "#8A4D1F",
+          green: "#C5E9CD",
+          "green-text": "#2F6B3C",
+        },
       },
       fontFamily: {
         display: ["var(--font-display)", "system-ui", "sans-serif"],
