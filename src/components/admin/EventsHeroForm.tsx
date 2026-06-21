@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { saveContent, type FormState } from "@/app/admin/actions";
-import { TextField, TextArea } from "./AdminFields";
+import { TextField, TextArea, SelectField, HERO_HEIGHT_OPTIONS } from "./AdminFields";
 import MediaField from "./MediaField";
 
 function str(v: unknown): string {
@@ -22,6 +22,7 @@ export default function EventsHeroForm({
     sub: str(initial.sub),
     heroVideo: str(initial.heroVideo),
     heroImage: str(initial.heroImage),
+    heroHeight: str(initial.heroHeight) || "auto",
   });
   const [state, action, pending] = useActionState<FormState, FormData>(saveContent, {});
   const set = (k: keyof typeof f) => (v: string) => setF({ ...f, [k]: v });
@@ -51,6 +52,7 @@ export default function EventsHeroForm({
           hint="Tom video = standard-udseende. Afspilles automatisk, lydløst og i loop."
         />
         <MediaField label="Baggrundsbillede (fallback / poster)" accept="image" value={f.heroImage} onChange={set("heroImage")} />
+        <SelectField label="Hero-højde" value={f.heroHeight} onChange={set("heroHeight")} options={HERO_HEIGHT_OPTIONS} />
       </div>
 
       {state.error && <p className="rounded-xl border border-admin-line bg-admin-peach px-4 py-3 text-sm text-admin-peach-text">⚠️ {state.error}</p>}

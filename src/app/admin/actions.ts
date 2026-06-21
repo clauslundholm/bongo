@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { getAdminUser } from "@/lib/auth";
+import { locales } from "@/i18n/config";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -17,6 +18,15 @@ async function requireAdmin() {
 
 function revalidatePublic() {
   revalidatePath("/", "layout");
+  // Bust the concrete localized routes too, so ISR-cached pages update immediately.
+  for (const l of locales) {
+    revalidatePath(`/${l}`);
+    revalidatePath(`/${l}/events`);
+    revalidatePath(`/${l}/festivaller`);
+    revalidatePath(`/${l}/erhverv`);
+    revalidatePath(`/${l}/how-to-bingo`);
+    revalidatePath(`/${l}/om`);
+  }
 }
 
 function eventFromForm(form: FormData) {

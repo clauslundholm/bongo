@@ -25,7 +25,7 @@ function fallbackFor(key: Key, locale: Locale) {
   if (key === "corp") return dict.corp;
   if (key === "fest") return dict.fest;
   if (key === "howto") return dict.howto;
-  return { kicker: dict.upcoming.kicker, title: dict.upcoming.title, sub: dict.upcoming.sub, heroVideo: "", heroImage: "" };
+  return { kicker: dict.upcoming.kicker, title: dict.upcoming.title, sub: dict.upcoming.sub, heroVideo: "", heroImage: "", heroHeight: "auto" };
 }
 
 export default async function ContentPage({

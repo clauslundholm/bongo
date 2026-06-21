@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { saveContent, type FormState } from "@/app/admin/actions";
-import { TextField, TextArea, IconBtn } from "./AdminFields";
+import { TextField, TextArea, IconBtn, SelectField, HERO_HEIGHT_OPTIONS } from "./AdminFields";
 import MediaField from "./MediaField";
 
 type Block = { title: string; paragraphsText: string; listText: string };
@@ -12,7 +12,7 @@ function str(v: unknown): string {
   return typeof v === "string" ? v : "";
 }
 
-function normalize(initial: Record<string, unknown>): { meta: { kicker: string; title: string; intro: string; cta: string; heroVideo: string; heroImage: string }; blocks: Block[] } {
+function normalize(initial: Record<string, unknown>): { meta: { kicker: string; title: string; intro: string; cta: string; heroVideo: string; heroImage: string; heroHeight: string }; blocks: Block[] } {
   const rawBlocks = (Array.isArray(initial.blocks) ? initial.blocks : []) as RawBlock[];
   return {
     meta: {
@@ -22,6 +22,7 @@ function normalize(initial: Record<string, unknown>): { meta: { kicker: string; 
       cta: str(initial.cta),
       heroVideo: str(initial.heroVideo),
       heroImage: str(initial.heroImage),
+      heroHeight: str(initial.heroHeight) || "auto",
     },
     blocks: rawBlocks.map((b) => ({
       title: str(b.title),
@@ -52,6 +53,7 @@ export default function BookingContentForm({
     cta: meta.cta,
     heroVideo: meta.heroVideo,
     heroImage: meta.heroImage,
+    heroHeight: meta.heroHeight,
     blocks: blocks.map((b) => ({
       title: b.title,
       paragraphs: b.paragraphsText.split("\n").map((s) => s.trim()).filter(Boolean),
@@ -106,6 +108,12 @@ export default function BookingContentForm({
           accept="image"
           value={meta.heroImage}
           onChange={(v) => setMeta({ ...meta, heroImage: v })}
+        />
+        <SelectField
+          label="Hero-højde"
+          value={meta.heroHeight}
+          onChange={(v) => setMeta({ ...meta, heroHeight: v })}
+          options={HERO_HEIGHT_OPTIONS}
         />
       </div>
 

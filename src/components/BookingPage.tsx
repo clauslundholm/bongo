@@ -16,6 +16,7 @@ type Data = {
   blocks: Section[];
   heroVideo?: string;
   heroImage?: string;
+  heroHeight?: string;
 };
 
 const CHARS = ["strong-duck", "dancer2", "dancer1", "unicorn", "blowey", "henry-hoover", "host", "69-ball"];
@@ -39,10 +40,15 @@ export default function BookingPage({
   const contactHref = ctaHref ?? `/${locale}/kontakt`;
   const heroVideo = data.heroVideo?.trim();
   const effectiveImage = data.heroImage?.trim() || heroImage;
+  const hh = (data.heroHeight ?? "").trim();
+  const heroStyle = hh && hh !== "auto" ? { minHeight: `${hh}vh` } : undefined;
 
   return (
     <>
-      <section className="relative overflow-hidden bg-bongo-black pt-16 pb-16 px-5 sm:px-8">
+      <section
+        className="relative flex items-center justify-center overflow-hidden bg-bongo-black px-5 py-16 sm:px-8"
+        style={heroStyle}
+      >
         {heroVideo ? (
           <>
             <video
@@ -70,7 +76,7 @@ export default function BookingPage({
           </>
         )}
 
-        <div className="relative z-10 mx-auto max-w-4xl text-center">
+        <div className="relative z-10 mx-auto w-full max-w-4xl text-center">
           <p className="font-display uppercase text-bongo-pink text-xl">{data.kicker}</p>
           <h1 className="text-5xl sm:text-8xl text-white text-stroke-white">{data.title}</h1>
           <p className="mx-auto mt-5 max-w-2xl font-display uppercase text-bongo-yellow text-lg sm:text-2xl">

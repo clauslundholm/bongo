@@ -22,13 +22,17 @@ export default async function EventsPage({ params }: { params: Promise<{ locale:
     sub: dict.upcoming.sub,
     heroVideo: "",
     heroImage: "",
+    heroHeight: "auto",
   });
   const heroVideo = hero.heroVideo?.trim();
+  const hh = (hero.heroHeight ?? "").trim();
+  const heroStyle = hh && hh !== "auto" ? { minHeight: `${hh}vh` } : undefined;
 
   return (
     <>
       <section
-        className={`relative overflow-hidden pt-16 pb-12 px-5 sm:px-8 text-center ${
+        style={heroStyle}
+        className={`relative flex flex-col items-center justify-center overflow-hidden px-5 py-12 sm:px-8 text-center ${
           heroVideo ? "bg-bongo-black" : "bg-bongo-pink bg-dots"
         }`}
       >
