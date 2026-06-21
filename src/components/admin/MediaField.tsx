@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { uploadViaSignedUrl } from "@/lib/media-upload";
 
 type MediaItem = { name: string; url: string; size: number; mimetype: string; createdAt: string };
 
@@ -90,18 +91,10 @@ function MediaModal({
     setUploading(true);
     setError("");
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/media", { method: "POST", body: fd });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json.error ?? "Upload fejlede.");
-      } else {
-        onSelect(json.url);
-        return;
-      }
-    } catch {
-      setError("Upload fejlede.");
+      const { url } = await uploadViaSignedUrl(file);
+      onSelect(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Upload fejlede.");
     } finally {
       setUploading(false);
     }
