@@ -11,6 +11,14 @@ const badgeClass: Record<string, string> = {
   new: "pp-badge-completed",
 };
 
+const COUNTRY: Record<string, string> = {
+  da: "🇩🇰 DK",
+  no: "🇳🇴 NO",
+  sv: "🇸🇪 SE",
+  fi: "🇫🇮 FI",
+  fo: "🇫🇴 FO",
+};
+
 export default async function AdminEvents() {
   const events = await adminListEvents();
 
@@ -28,6 +36,7 @@ export default async function AdminEvents() {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-admin-line text-xs font-semibold uppercase tracking-wide text-admin-muted">
+              <th className="px-5 py-4">Land</th>
               <th className="px-5 py-4">Dato</th>
               <th className="px-5 py-4">By / Venue</th>
               <th className="px-5 py-4">Status</th>
@@ -38,10 +47,11 @@ export default async function AdminEvents() {
           </thead>
           <tbody>
             {events.length === 0 && (
-              <tr><td colSpan={6} className="px-5 py-10 text-center text-admin-muted">Ingen shows endnu.</td></tr>
+              <tr><td colSpan={7} className="px-5 py-10 text-center text-admin-muted">Ingen shows endnu.</td></tr>
             )}
             {events.map((e) => (
               <tr key={e.id} className="border-b border-admin-line/70 last:border-0 hover:bg-admin-panel/60">
+                <td className="px-5 py-4 whitespace-nowrap text-admin-ink">{COUNTRY[e.locale] ?? e.locale}</td>
                 <td className="px-5 py-4 font-semibold text-admin-ink">{e.event_date}</td>
                 <td className="px-5 py-4">
                   <div className="font-semibold text-admin-ink">{e.city}</div>

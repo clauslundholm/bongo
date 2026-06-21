@@ -3,17 +3,16 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ConfettiButton from "@/components/ConfettiButton";
 import EventCard from "@/components/EventCard";
-import { isLocale, locales, type Locale } from "@/i18n/config";
+import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 import { formatEventDate } from "@/data/events";
-import { getEvents, getEventBySlug, getEventSlugs } from "@/lib/data/events";
+import { getEvents, getEventBySlug, getEventParams } from "@/lib/data/events";
 
 export const revalidate = 60;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const slugs = await getEventSlugs();
-  return locales.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
+  return getEventParams();
 }
 
 export default async function EventDetail({
@@ -25,12 +24,12 @@ export default async function EventDetail({
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
-  const event = await getEventBySlug(slug);
+  const event = await getEventBySlug(slug, locale);
   if (!event) notFound();
 
   const d = formatEventDate(event.date, locale);
   const soldout = event.status === "soldout";
-  const others = (await getEvents()).filter((e) => e.slug !== event.slug).slice(0, 3);
+  const others = (await getEvents(locale)).filter((e) => e.slug !== event.slug).slice(0, 3);
 
   return (
     <>

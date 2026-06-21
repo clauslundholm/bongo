@@ -5,6 +5,7 @@ import { createSupabaseReadClient } from "@/lib/supabase/read";
 export interface EventRow {
   id: string;
   slug: string;
+  locale: string;
   city: string;
   venue: string;
   address: string;
@@ -23,6 +24,7 @@ export interface EventRow {
 export function mapRow(r: EventRow): BongoEvent {
   return {
     slug: r.slug,
+    locale: r.locale,
     city: r.city,
     venue: r.venue,
     address: r.address,
@@ -38,36 +40,42 @@ export function mapRow(r: EventRow): BongoEvent {
   };
 }
 
-/** Published events, sorted by date. Falls back to seed data when no DB. */
-export async function getEvents(): Promise<BongoEvent[]> {
+function seedFor(locale: string) {
+  return sortedEvents().filter((e) => (e.locale ?? "da") === locale);
+}
+
+/** Published events for one country/locale, sorted by date. Seed fallback when no DB. */
+export async function getEvents(locale: string): Promise<BongoEvent[]> {
   const sb = createSupabaseReadClient();
-  if (!sb) return sortedEvents();
+  if (!sb) return seedFor(locale);
   const { data, error } = await sb
     .from("events")
     .select("*")
     .eq("published", true)
+    .eq("locale", locale)
     .order("event_date", { ascending: true });
-  if (error || !data) return sortedEvents();
+  if (error || !data) return seedFor(locale);
   return (data as EventRow[]).map(mapRow);
 }
 
-export async function getEventBySlug(slug: string): Promise<BongoEvent | undefined> {
+export async function getEventBySlug(slug: string, locale: string): Promise<BongoEvent | undefined> {
   const sb = createSupabaseReadClient();
-  if (!sb) return seedEvents.find((e) => e.slug === slug);
+  if (!sb) return seedFor(locale).find((e) => e.slug === slug);
   const { data } = await sb
     .from("events")
     .select("*")
     .eq("slug", slug)
+    .eq("locale", locale)
     .eq("published", true)
     .maybeSingle();
   return data ? mapRow(data as EventRow) : undefined;
 }
 
-/** Slugs for static generation (seed fallback keeps builds working offline). */
-export async function getEventSlugs(): Promise<string[]> {
+/** (locale, slug) pairs for static generation. Seed fallback keeps builds working offline. */
+export async function getEventParams(): Promise<{ locale: string; slug: string }[]> {
   const sb = createSupabaseReadClient();
-  if (!sb) return seedEvents.map((e) => e.slug);
-  const { data, error } = await sb.from("events").select("slug").eq("published", true);
-  if (error || !data) return seedEvents.map((e) => e.slug);
-  return (data as { slug: string }[]).map((r) => r.slug);
+  if (!sb) return seedEvents.map((e) => ({ locale: e.locale ?? "da", slug: e.slug }));
+  const { data, error } = await sb.from("events").select("slug, locale").eq("published", true);
+  if (error || !data) return seedEvents.map((e) => ({ locale: e.locale ?? "da", slug: e.slug }));
+  return (data as { slug: string; locale: string }[]).map((r) => ({ locale: r.locale, slug: r.slug }));
 }

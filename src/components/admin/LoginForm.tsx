@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
@@ -53,11 +54,7 @@ export default function LoginForm() {
           ← Bongo&apos;s Bingo
         </Link>
         <div className="mt-4 flex items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-admin-yellow text-admin-ink">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 12h3l2-6 4 13 3-9 2 2h4" />
-            </svg>
-          </span>
+          <Image src="/characters/69-ball.png" alt="" width={36} height={36} className="h-9 w-9 rounded-xl object-contain" />
           <h1 className="text-2xl font-bold text-admin-ink">Bongo Admin</h1>
         </div>
 

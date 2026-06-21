@@ -15,7 +15,7 @@ export default async function EventsPage({ params }: { params: Promise<{ locale:
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
-  const events = await getEvents();
+  const events = await getEvents(locale);
   const hero = await getPageContent("events", locale, {
     kicker: dict.upcoming.kicker,
     title: dict.upcoming.title,

@@ -22,7 +22,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
-  const events = await getEvents();
+  const events = await getEvents(locale);
   const homeHero = await getPageContent("home", locale, {
     badge: dict.hero.badge,
     title1: dict.hero.title1,

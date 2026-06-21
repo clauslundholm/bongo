@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/app/admin/actions";
 
@@ -56,11 +57,7 @@ export default function AdminSidebar({ email }: { email: string }) {
   return (
     <aside className="flex w-full shrink-0 flex-col bg-admin-ink px-4 py-5 text-white/70 lg:sticky lg:top-0 lg:h-screen lg:w-64 lg:self-start lg:overflow-y-auto">
       <div className="flex items-center gap-2.5 px-2">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-admin-yellow text-admin-ink">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 12h3l2-6 4 13 3-9 2 2h4" />
-          </svg>
-        </span>
+        <Image src="/characters/69-ball.png" alt="" width={36} height={36} className="h-9 w-9 rounded-xl object-contain" />
         <span className="text-lg font-bold text-white">Bongo Admin</span>
       </div>
 

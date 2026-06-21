@@ -2,6 +2,7 @@ export type EventStatus = "onsale" | "fewleft" | "soldout" | "new";
 
 export interface BongoEvent {
   slug: string;
+  locale?: string;
   city: string;
   venue: string;
   address: string;

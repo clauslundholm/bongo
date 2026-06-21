@@ -8,7 +8,7 @@ export default function SetupNotice() {
         </p>
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-admin-ink/80">
           <li>Opret et projekt på <strong>supabase.com</strong>.</li>
-          <li>Kør SQL&apos;en i <code className="rounded bg-admin-panel px-1">supabase/migrations/0001_init.sql</code> og <code className="rounded bg-admin-panel px-1">0002_storage.sql</code>.</li>
+          <li>Kør SQL-filerne i <code className="rounded bg-admin-panel px-1">supabase/migrations/</code> i rækkefølge (0001, 0002, 0003).</li>
           <li>Kopiér <code className="rounded bg-admin-panel px-1">.env.example</code> til <code className="rounded bg-admin-panel px-1">.env.local</code> og udfyld nøgler + <code className="rounded bg-admin-panel px-1">ADMIN_EMAILS</code>.</li>
           <li>Opret din admin-bruger i Supabase → Authentication → Users (slå Auto Confirm til).</li>
           <li>Genstart serveren og gå til <code className="rounded bg-admin-panel px-1">/admin/login</code>.</li>

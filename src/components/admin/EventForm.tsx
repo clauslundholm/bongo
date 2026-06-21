@@ -8,6 +8,13 @@ import MediaField from "./MediaField";
 
 const STATUSES = ["onsale", "fewleft", "soldout", "new"];
 const ACCENTS = ["pink", "yellow", "cyan", "purple"];
+const COUNTRIES = [
+  { value: "da", label: "🇩🇰 Danmark" },
+  { value: "no", label: "🇳🇴 Norge" },
+  { value: "sv", label: "🇸🇪 Sverige" },
+  { value: "fi", label: "🇫🇮 Suomi" },
+  { value: "fo", label: "🇫🇴 Føroyar" },
+];
 
 export default function EventForm({ event }: { event?: EventRow | null }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveEvent, {});
@@ -18,6 +25,14 @@ export default function EventForm({ event }: { event?: EventRow | null }) {
       {event?.id && <input type="hidden" name="id" value={event.id} />}
 
       <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block sm:col-span-2">
+          <span className="text-xs font-semibold uppercase tracking-wide text-admin-muted">Land (hvilket sprog/land viser showet)</span>
+          <select name="locale" defaultValue={event?.locale ?? "da"} className="pp-input mt-1.5">
+            {COUNTRIES.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </label>
         <Field name="slug" label="Slug (unik)" defaultValue={event?.slug} required placeholder="kobenhavn-2026-07-04" />
         <Field name="city" label="By" defaultValue={event?.city} required />
         <Field name="venue" label="Venue" defaultValue={event?.venue} required />

@@ -31,8 +31,10 @@ function revalidatePublic() {
 
 function eventFromForm(form: FormData) {
   const num = Number(form.get("price_from"));
+  const locale = String(form.get("locale") ?? "da").trim();
   return {
     slug: String(form.get("slug") ?? "").trim(),
+    locale: ["da", "no", "sv", "fi", "fo"].includes(locale) ? locale : "da",
     city: String(form.get("city") ?? "").trim(),
     venue: String(form.get("venue") ?? "").trim(),
     address: String(form.get("address") ?? "").trim(),
