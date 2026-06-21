@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { getAdminUser } from "@/lib/auth";
+import { isSupabaseConfigured, isAdminEmail } from "@/lib/supabase/env";
+import { getSessionUser } from "@/lib/auth";
 import SetupNotice from "@/components/admin/SetupNotice";
 import { signOut } from "../actions";
 
@@ -16,8 +16,11 @@ const NAV = [
 export default async function DashLayout({ children }: { children: React.ReactNode }) {
   if (!isSupabaseConfigured) return <SetupNotice />;
 
-  const user = await getAdminUser();
+  const user = await getSessionUser();
   if (!user) redirect("/admin/login");
+  if (!isAdminEmail(user.email)) {
+    redirect(`/admin/login?error=forbidden&email=${encodeURIComponent(user.email ?? "")}`);
+  }
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col lg:flex-row">
