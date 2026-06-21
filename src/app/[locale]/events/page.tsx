@@ -5,12 +5,16 @@ import PhotoBand from "@/components/PhotoBand";
 import Newsletter from "@/components/Newsletter";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { getEvents } from "@/lib/data/events";
+
+export const revalidate = 60;
 
 export default async function EventsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
+  const events = await getEvents();
 
   return (
     <>
@@ -26,11 +30,11 @@ export default async function EventsPage({ params }: { params: Promise<{ locale:
 
       <section className="bg-bongo-cream bg-dots-dark section-pad">
         <div className="mx-auto max-w-6xl">
-          <EventsGrid locale={locale} dict={dict} />
+          <EventsGrid events={events} locale={locale} dict={dict} />
         </div>
       </section>
 
-      <Newsletter dict={dict} />
+      <Newsletter dict={dict} locale={locale} />
     </>
   );
 }

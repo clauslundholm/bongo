@@ -2,22 +2,24 @@
 
 import { useMemo, useState } from "react";
 import EventCard from "./EventCard";
-import { sortedEvents } from "@/data/events";
+import type { BongoEvent } from "@/data/events";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 
 export default function EventsGrid({
+  events,
   locale,
   dict,
   limit,
   showFilter = true,
 }: {
+  events: BongoEvent[];
   locale: Locale;
   dict: Dictionary;
   limit?: number;
   showFilter?: boolean;
 }) {
-  const all = useMemo(() => sortedEvents(), []);
+  const all = useMemo(() => events, [events]);
   const cities = useMemo(() => ["ALL", ...Array.from(new Set(all.map((e) => e.city)))], [all]);
   const [city, setCity] = useState("ALL");
 

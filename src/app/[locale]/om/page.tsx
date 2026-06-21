@@ -9,12 +9,16 @@ import PhotoBand from "@/components/PhotoBand";
 import ConfettiButton from "@/components/ConfettiButton";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { getPageContent } from "@/lib/data/content";
+
+export const revalidate = 60;
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
+  const about = await getPageContent("about", locale, dict.about);
 
   return (
     <>
@@ -22,8 +26,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <Image src="/characters/dancer2.png" alt="" width={200} height={200} className="pointer-events-none absolute left-4 bottom-0 hidden w-36 animate-float md:block" />
         <Image src="/characters/dancer2-reverse.png" alt="" width={200} height={200} className="pointer-events-none absolute right-4 bottom-0 hidden w-36 animate-float md:block" />
         <p className="font-display uppercase text-bongo-yellow text-xl">{dict.whatis.kicker}</p>
-        <h1 className="text-5xl sm:text-8xl text-white text-stroke">{dict.about.title}</h1>
-        <p className="mx-auto mt-4 max-w-xl font-body text-white/90 text-lg">{dict.about.intro}</p>
+        <h1 className="text-5xl sm:text-8xl text-white text-stroke">{about.title}</h1>
+        <p className="mx-auto mt-4 max-w-xl font-body text-white/90 text-lg">{about.intro}</p>
       </section>
 
       <Marquee items={dict.marquee} className="bg-bongo-yellow text-bongo-black" />
@@ -33,18 +37,18 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           <Reveal>
             <div className="grid items-center gap-8 md:grid-cols-2">
               <div>
-                <h2 className="text-4xl text-bongo-pink">{dict.about.historyTitle}</h2>
-                <p className="mt-4 font-body text-lg text-bongo-black/80">{dict.about.history}</p>
+                <h2 className="text-4xl text-bongo-pink">{about.historyTitle}</h2>
+                <p className="mt-4 font-body text-lg text-bongo-black/80">{about.history}</p>
               </div>
               <PhotoFrame src="/photos/DSC09826.webp" alt="Bongo's Bingo show" caption="Liverpool → Norden" rotate="rotate-2" />
             </div>
           </Reveal>
 
           <Reveal delay={0.05}>
-            <h2 className="mt-14 text-4xl text-bongo-pink">{dict.about.howTitle}</h2>
+            <h2 className="mt-14 text-4xl text-bongo-pink">{about.howTitle}</h2>
           </Reveal>
           <div className="mt-8 grid gap-5 sm:grid-cols-2">
-            {dict.about.how.map((step, i) => (
+            {about.how.map((step, i) => (
               <Reveal key={i} delay={(i % 2) * 0.06}>
                 <div className="card-pop h-full p-6">
                   <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border-4 border-bongo-black bg-bongo-yellow font-display text-lg">
@@ -70,13 +74,13 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
       <section className="bg-bongo-pink bg-dots section-pad text-center">
         <div className="mx-auto max-w-3xl">
           <Reveal>
-            <h2 className="text-4xl sm:text-6xl text-white text-stroke">{dict.about.prizesTitle}</h2>
-            <p className="mt-4 font-body text-white/90 text-lg">{dict.about.prizes}</p>
+            <h2 className="text-4xl sm:text-6xl text-white text-stroke">{about.prizesTitle}</h2>
+            <p className="mt-4 font-body text-white/90 text-lg">{about.prizes}</p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <ConfettiButton className="btn-yellow text-lg" href={`/${locale}/events`}>
                 🎟️ {dict.hero.cta}
               </ConfettiButton>
-              <Link href={`/${locale}/faq`} className="btn-white text-lg">{dict.about.faqCta}</Link>
+              <Link href={`/${locale}/faq`} className="btn-white text-lg">{about.faqCta}</Link>
             </div>
           </Reveal>
         </div>

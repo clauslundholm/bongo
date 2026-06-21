@@ -12,12 +12,16 @@ import SocialFeed from "@/components/SocialFeed";
 import Reveal from "@/components/Reveal";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { getEvents } from "@/lib/data/events";
+
+export const revalidate = 60;
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: rawLocale } = await params;
   if (!isLocale(rawLocale)) notFound();
   const locale = rawLocale as Locale;
   const dict = getDictionary(locale);
+  const events = await getEvents();
 
   return (
     <>
@@ -40,7 +44,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           </Reveal>
 
           <div className="mt-10">
-            <EventsGrid locale={locale} dict={dict} limit={6} showFilter={false} />
+            <EventsGrid events={events} locale={locale} dict={dict} limit={6} showFilter={false} />
           </div>
 
           <div className="mt-10 text-center">
@@ -65,7 +69,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
 
       <SocialFeed dict={dict} />
 
-      <Newsletter dict={dict} />
+      <Newsletter dict={dict} locale={locale} />
     </>
   );
 }

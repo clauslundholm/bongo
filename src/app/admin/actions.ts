@@ -1,0 +1,137 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { getAdminUser } from "@/lib/auth";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+export type FormState = { ok?: boolean; error?: string };
+
+async function requireAdmin() {
+  const user = await getAdminUser();
+  if (!user) redirect("/admin/login");
+  return user;
+}
+
+function revalidatePublic() {
+  revalidatePath("/", "layout");
+}
+
+function eventFromForm(form: FormData) {
+  const num = Number(form.get("price_from"));
+  return {
+    slug: String(form.get("slug") ?? "").trim(),
+    city: String(form.get("city") ?? "").trim(),
+    venue: String(form.get("venue") ?? "").trim(),
+    address: String(form.get("address") ?? "").trim(),
+    event_date: String(form.get("event_date") ?? "").trim(),
+    doors: String(form.get("doors") ?? "").trim(),
+    starts: String(form.get("starts") ?? "").trim(),
+    price_from: Number.isFinite(num) ? Math.max(0, Math.round(num)) : 0,
+    currency: String(form.get("currency") ?? "DKK").trim() || "DKK",
+    status: String(form.get("status") ?? "onsale").trim(),
+    image: String(form.get("image") ?? "").trim(),
+    accent: String(form.get("accent") ?? "pink").trim(),
+    ticket_url: String(form.get("ticket_url") ?? "").trim(),
+    published: form.get("published") === "on" || form.get("published") === "true",
+  };
+}
+
+export async function saveEvent(_prev: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return { error: "Supabase er ikke konfigureret." };
+
+  const id = String(form.get("id") ?? "").trim();
+  const values = eventFromForm(form);
+
+  if (!values.slug || !values.city || !values.venue || !values.event_date) {
+    return { error: "Udfyld mindst slug, by, venue og dato." };
+  }
+
+  if (id) {
+    const { error } = await sb.from("events").update(values).eq("id", id);
+    if (error) return { error: error.message };
+  } else {
+    const { error } = await sb.from("events").insert(values);
+    if (error) return { error: error.message };
+  }
+
+  revalidatePublic();
+  redirect("/admin/events");
+}
+
+export async function deleteEvent(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const id = String(form.get("id") ?? "");
+  if (id) await sb.from("events").delete().eq("id", id);
+  revalidatePublic();
+  revalidatePath("/admin/events");
+  redirect("/admin/events");
+}
+
+export async function toggleMessageHandled(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const id = String(form.get("id") ?? "");
+  const handled = form.get("handled") === "true";
+  if (id) await sb.from("contact_messages").update({ handled }).eq("id", id);
+  revalidatePath("/admin/messages");
+}
+
+export async function deleteSubscriber(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const id = String(form.get("id") ?? "");
+  if (id) await sb.from("newsletter_subscribers").delete().eq("id", id);
+  revalidatePath("/admin/subscribers");
+}
+
+export async function saveContent(_prev: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return { error: "Supabase er ikke konfigureret." };
+
+  const key = String(form.get("key") ?? "").trim();
+  const locale = String(form.get("locale") ?? "").trim();
+  const raw = String(form.get("data") ?? "").trim();
+
+  if (!key || !locale) return { error: "Manglende key/locale." };
+
+  let parsed: unknown;
+  try {
+    parsed = raw ? JSON.parse(raw) : {};
+  } catch {
+    return { error: "Ugyldig JSON — tjek syntaksen." };
+  }
+
+  const { error } = await sb
+    .from("page_content")
+    .upsert({ key, locale, data: parsed }, { onConflict: "key,locale" });
+  if (error) return { error: error.message };
+
+  revalidatePublic();
+  return { ok: true };
+}
+
+export async function resetContent(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const key = String(form.get("key") ?? "");
+  const locale = String(form.get("locale") ?? "");
+  if (key && locale) await sb.from("page_content").delete().eq("key", key).eq("locale", locale);
+  revalidatePublic();
+  revalidatePath("/admin/content");
+}
+
+export async function signOut() {
+  const supabase = await createSupabaseServerClient();
+  if (supabase) await supabase.auth.signOut();
+  redirect("/admin/login");
+}

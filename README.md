@@ -64,16 +64,51 @@ src/
   data/events.ts            # alle events (tilføj/ret her)
   i18n/                     # config + dictionaries (5 sprog)
   lib/confetti.ts           # konfetti-burst
-  middleware.ts             # sprog-routing
+  lib/supabase/             # server/admin/browser/read clients + env
+  lib/data/                 # events + page-content data-access (DB → seed fallback)
+  lib/admin-data.ts         # admin reads (service role)
+  app/admin/                # admin-område (login + dashboard)
+  app/actions.ts            # nyhedsbrev + kontakt server actions
+  proxy.ts                  # sprog-routing + Supabase session
+supabase/migrations/        # SQL-skema (kør i Supabase)
 public/characters/          # maskotter + logo
 ```
 
+## 🗄️ Supabase + Admin
+
+Sitet kan køre i to tilstande:
+
+- **Uden Supabase** (standard): events kommer fra `src/data/events.ts`, og nyhedsbrev/kontakt-formularer kvitterer pænt uden at gemme. Alt virker ud af boksen.
+- **Med Supabase:** events, nyhedsbrev-tilmeldinger, kontaktbeskeder og sidetekster ligger i databasen og styres fra `/admin`.
+
+### Sådan slår du Supabase til
+
+1. Opret et projekt på [supabase.com](https://supabase.com).
+2. Åbn **SQL Editor** og kør hele `supabase/migrations/0001_init.sql` (opretter tabeller, RLS og seed-data).
+3. Kopiér `.env.example` → `.env.local` og udfyld:
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Project Settings → API)
+   - `SUPABASE_SERVICE_ROLE_KEY` (samme side — **kun server, hold hemmelig**)
+   - `ADMIN_EMAILS` = kommasepareret liste af emails der må logge ind på `/admin`
+4. Opret din admin-bruger i **Authentication → Users → Add user** (email + password). Emailen skal stå i `ADMIN_EMAILS`.
+5. Genstart `npm run dev` og log ind på **`/admin`**.
+
+### Admin-området (`/admin`)
+
+- **Shows** — opret, rediger, slet, og udgiv/skjul events (CRUD).
+- **Nyhedsbrev** — se tilmeldte og eksportér som CSV.
+- **Beskeder** — læs kontaktbeskeder, markér som læst.
+- **Indhold** — rediger sidetekster (om / virksomheder / festivaller / how-to-bingo) pr. sprog som JSON. Tomt = standardtekst fra ordbogen.
+
+Login bruger Supabase Auth (email/password) og er låst til `ADMIN_EMAILS`. Skrivninger går via service-role-nøglen server-side; offentlige læsninger er beskyttet af RLS (kun udgivne events).
+
+Datatabeller: `events`, `newsletter_subscribers`, `contact_messages`, `page_content`.
+
 ## 🛠️ Tilpasning
 
-- **Tilføj et show:** rediger `src/data/events.ts` (kopiér et objekt, ret by/dato/venue/pris).
-- **Ret tekster/oversættelser:** `src/i18n/dictionaries.ts`.
+- **Tilføj et show:** via `/admin` (med Supabase) — ellers rediger `src/data/events.ts`.
+- **Ret tekster/oversættelser:** `/admin` → Indhold, eller `src/i18n/dictionaries.ts` for standardteksten.
 - **Skift farver:** `tailwind.config.ts` (`bongo.pink`, `bongo.yellow`, `bongo.black` …).
-- **Skift billet-link:** konstanten `PAYLOGIC` i `src/data/events.ts`.
+- **Skift billet-link:** konstanten `PAYLOGIC` i `src/data/events.ts` (og seed-SQL).
 
 ---
 
