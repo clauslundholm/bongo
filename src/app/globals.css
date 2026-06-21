@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Tenso";
+  src: url("/fonts/Tenso-Regular.woff2") format("woff2"),
+       url("/fonts/Tenso-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tenso";
+  src: url("/fonts/Tenso-Black.woff2") format("woff2"),
+       url("/fonts/Tenso-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-display: "Tenso", "Arial Black", system-ui, sans-serif;
+  --font-body: "Tenso", system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bongo-black text-white font-body antialiased overflow-x-hidden;
+  }
+  ::selection {
+    @apply bg-bongo-pink text-white;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display uppercase tracking-tight leading-[0.95];
+    font-weight: 900;
+  }
+}
+
+/* Tenso Black for all display text */
+.font-display {
+  font-weight: 900;
+}
+
+@layer components {
+  .btn-pop {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-4 border-bongo-black px-7 py-3
+      font-display uppercase text-base tracking-wide shadow-pop transition-all duration-150
+      hover:-translate-y-1 hover:translate-x-[-2px] hover:shadow-pop-lg active:translate-y-1 active:shadow-none;
+  }
+  .btn-pink { @apply btn-pop bg-bongo-pink text-white; }
+  .btn-yellow { @apply btn-pop bg-bongo-yellow text-bongo-black; }
+  .btn-white { @apply btn-pop bg-white text-bongo-black; }
+
+  .card-pop {
+    @apply rounded-3xl border-4 border-bongo-black bg-white text-bongo-black shadow-pop;
+  }
+
+  .tag-pill {
+    @apply inline-block rounded-full border-2 border-bongo-black px-3 py-1 text-xs font-display uppercase tracking-wide;
+  }
+
+  .section-pad { @apply px-5 sm:px-8 lg:px-16 py-16 sm:py-24; }
+
+  .text-stroke {
+    -webkit-text-stroke: 2px #0A0A0A;
+    paint-order: stroke fill;
+  }
+  .text-stroke-white {
+    -webkit-text-stroke: 2px #fff;
+    paint-order: stroke fill;
+  }
+}
+
+/* dotted/halftone party background */
+.bg-dots {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+.bg-dots-dark {
+  background-image: radial-gradient(rgba(10, 10, 10, 0.12) 1.5px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+
+/* Bongo logo tile pattern (white shapes — best on dark/coloured backgrounds) */
+.bg-logo-pattern {
+  background-image: url("/logo-pattern.svg");
+  background-repeat: repeat;
+  background-size: 300px auto;
+}
+
+/* scrolling stripes */
+.stripes {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #0a0a0a 0 18px,
+    #ffe600 18px 36px
+  );
+}
+
+.disco-text {
+  background: linear-gradient(90deg, #ff1fa2, #ffe600, #00e5ff, #7a1fff, #ff1fa2);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: disco 6s linear infinite;
+}
+@keyframes disco {
+  to { background-position: 300% 0; }
+}
+
+/* hide scrollbar for marquees */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
