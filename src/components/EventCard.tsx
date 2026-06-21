@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import BuyTicketsButton from "./BuyTicketsButton";
 import { type BongoEvent, formatEventDate } from "@/data/events";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
@@ -72,20 +73,14 @@ export default function EventCard({
         </div>
 
         <div className="mt-auto flex items-center gap-2 pt-5">
-          {soldout ? (
-            <span className="btn-pop w-full cursor-not-allowed bg-bongo-black/80 text-white text-sm opacity-70">
-              {dict.upcoming.soldout}
-            </span>
-          ) : (
-            <a
-              href={event.ticketUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-pink flex-1 text-sm"
-            >
-              {dict.upcoming.buy}
-            </a>
-          )}
+          <BuyTicketsButton
+            shopUrl={event.weeztixUrl}
+            label={dict.upcoming.buy}
+            soldout={soldout}
+            soldoutLabel={dict.upcoming.soldout}
+            title={`${event.city} · ${event.venue}`}
+            className="btn-pink flex-1 text-sm"
+          />
           <Link
             href={`/${locale}/events/${event.slug}`}
             className="btn-white px-4 text-sm"

@@ -14,6 +14,7 @@ export interface BongoEvent {
   status: EventStatus;
   image: string;
   ticketUrl: string;
+  weeztixUrl?: string;
   accent: "pink" | "yellow" | "cyan" | "purple";
 }
 

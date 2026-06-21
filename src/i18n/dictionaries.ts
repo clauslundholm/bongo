@@ -139,7 +139,7 @@ const da = {
     venue: "Venue",
     age: "Aldersgrænse",
     age18: "18+",
-    buy: "Køb billetter på Paylogic",
+    buy: "Køb billetter",
     lineupTitle: "Hvad du kan forvente",
     shareTitle: "Del festen",
     otherShows: "Andre shows",
@@ -394,7 +394,7 @@ const no: Dictionary = {
   },
   eventPage: {
     back: "Alle show", doors: "Dørene åpner", starts: "Showet starter", venue: "Venue",
-    age: "Aldersgrense", age18: "18+", buy: "Kjøp billetter på Paylogic",
+    age: "Aldersgrense", age18: "18+", buy: "Kjøp billetter",
     lineupTitle: "Hva du kan forvente", shareTitle: "Del festen", otherShows: "Andre show", priceFrom: "Billetter fra",
   },
   footer: { follow: "Følg oss", nordic: "Nordiske events", rights: "Bingo Entertainment ApS", privacy: "Personvernerklæring", nav: "Navigasjon", tagline: "It's Not Just Bingo – It's Bongo's Bingo." },
@@ -636,7 +636,7 @@ const sv: Dictionary = {
   },
   eventPage: {
     back: "Alla shows", doors: "Dörrarna öppnar", starts: "Showen börjar", venue: "Venue",
-    age: "Åldersgräns", age18: "18+", buy: "Köp biljetter på Paylogic",
+    age: "Åldersgräns", age18: "18+", buy: "Köp biljetter",
     lineupTitle: "Vad du kan förvänta dig", shareTitle: "Dela festen", otherShows: "Andra shows", priceFrom: "Biljetter från",
   },
   footer: { follow: "Följ oss", nordic: "Nordiska events", rights: "Bingo Entertainment ApS", privacy: "Integritetspolicy", nav: "Navigation", tagline: "It's Not Just Bingo – It's Bongo's Bingo." },
@@ -878,7 +878,7 @@ const fi: Dictionary = {
   },
   eventPage: {
     back: "Kaikki show't", doors: "Ovet aukeavat", starts: "Show alkaa", venue: "Venue",
-    age: "Ikäraja", age18: "18+", buy: "Osta liput Paylogicista",
+    age: "Ikäraja", age18: "18+", buy: "Osta liput",
     lineupTitle: "Mitä voit odottaa", shareTitle: "Jaa juhlat", otherShows: "Muut show't", priceFrom: "Liput alkaen",
   },
   footer: { follow: "Seuraa meitä", nordic: "Pohjoismaiset tapahtumat", rights: "Bingo Entertainment ApS", privacy: "Tietosuojakäytäntö", nav: "Navigointi", tagline: "It's Not Just Bingo – It's Bongo's Bingo." },
@@ -1120,7 +1120,7 @@ const fo: Dictionary = {
   },
   eventPage: {
     back: "Allar shows", doors: "Hurðarnar lata upp", starts: "Show byrjar", venue: "Venue",
-    age: "Aldursmark", age18: "18+", buy: "Keyp atgongumerki á Paylogic",
+    age: "Aldursmark", age18: "18+", buy: "Keyp atgongumerki",
     lineupTitle: "Hvat tú kanst vænta", shareTitle: "Deil veitsluna", otherShows: "Aðrar shows", priceFrom: "Atgongumerki frá",
   },
   footer: { follow: "Fylg okkum", nordic: "Norðurlendskar tiltøk", rights: "Bingo Entertainment ApS", privacy: "Privatlívspolitikkur", nav: "Navigatión", tagline: "It's Not Just Bingo – It's Bongo's Bingo." },

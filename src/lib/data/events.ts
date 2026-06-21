@@ -18,6 +18,7 @@ export interface EventRow {
   image: string;
   accent: BongoEvent["accent"];
   ticket_url: string;
+  weeztix_shop_url: string;
   published: boolean;
 }
 
@@ -36,6 +37,7 @@ export function mapRow(r: EventRow): BongoEvent {
     status: r.status,
     image: r.image,
     ticketUrl: r.ticket_url,
+    weeztixUrl: r.weeztix_shop_url,
     accent: r.accent,
   };
 }

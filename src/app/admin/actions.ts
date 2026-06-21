@@ -47,6 +47,7 @@ function eventFromForm(form: FormData) {
     image: String(form.get("image") ?? "").trim(),
     accent: String(form.get("accent") ?? "pink").trim(),
     ticket_url: String(form.get("ticket_url") ?? "").trim(),
+    weeztix_shop_url: String(form.get("weeztix_shop_url") ?? "").trim(),
     published: form.get("published") === "on" || form.get("published") === "true",
   };
 }

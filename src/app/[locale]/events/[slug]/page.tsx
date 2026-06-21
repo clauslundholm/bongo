@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import ConfettiButton from "@/components/ConfettiButton";
+import BuyTicketsButton from "@/components/BuyTicketsButton";
 import EventCard from "@/components/EventCard";
 import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -86,15 +86,14 @@ export default async function EventDetail({
             <InfoRow label={dict.eventPage.starts} value={event.start} />
             <InfoRow label={dict.eventPage.age} value={dict.eventPage.age18} />
 
-            {soldout ? (
-              <div className="btn-pop w-full cursor-not-allowed bg-bongo-black text-white opacity-80">
-                {dict.upcoming.soldout}
-              </div>
-            ) : (
-              <ConfettiButton className="btn-pink w-full text-lg" href={event.ticketUrl} external>
-                🎟️ {dict.eventPage.buy}
-              </ConfettiButton>
-            )}
+            <BuyTicketsButton
+              shopUrl={event.weeztixUrl}
+              label={`🎟️ ${dict.eventPage.buy}`}
+              soldout={soldout}
+              soldoutLabel={dict.upcoming.soldout}
+              title={`${event.city} · ${event.venue}`}
+              className="btn-pink w-full text-lg"
+            />
           </div>
         </div>
       </section>

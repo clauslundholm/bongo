@@ -3,8 +3,9 @@ import Reveal from "./Reveal";
 import PhotoFrame from "./PhotoFrame";
 import ConfettiButton from "./ConfettiButton";
 import type { Dictionary } from "@/i18n/dictionaries";
+import type { Locale } from "@/i18n/config";
 
-export default function WhatIs({ dict }: { dict: Dictionary }) {
+export default function WhatIs({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   return (
     <section className="relative bg-bongo-pink bg-logo-pattern section-pad overflow-hidden">
       <Image
@@ -57,7 +58,7 @@ export default function WhatIs({ dict }: { dict: Dictionary }) {
         <Reveal delay={0.15}>
           <div className="mt-10 flex flex-col items-center gap-6 text-center">
             <p className="disco-text font-display uppercase text-2xl sm:text-4xl">{dict.whatis.slogan}</p>
-            <ConfettiButton className="btn-yellow text-lg" href="https://shop.paylogic.com/45cf201e07dd425ab1a4f00ef2562b85/billet" external>
+            <ConfettiButton className="btn-yellow text-lg" href={`/${locale}/events`}>
               {dict.whatis.cta}
             </ConfettiButton>
           </div>

@@ -48,7 +48,7 @@ export default function EventForm({ event }: { event?: EventRow | null }) {
         </div>
         <Select name="status" label="Status" options={STATUSES} defaultValue={event?.status ?? "onsale"} />
         <Select name="accent" label="Farve" options={ACCENTS} defaultValue={event?.accent ?? "pink"} />
-        <Field name="ticket_url" label="Billet-link (Paylogic)" defaultValue={event?.ticket_url} className="sm:col-span-2" />
+        <Field name="weeztix_shop_url" label="Weeztix shop-URL" defaultValue={event?.weeztix_shop_url} placeholder="https://shop.weeztix.com/..." className="sm:col-span-2" />
         <div className="sm:col-span-2">
           <MediaField label="Billede" accept="image" value={image} onChange={setImage} name="image" />
         </div>

@@ -72,7 +72,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         </p>
       </PhotoBand>
 
-      <WhatIs dict={dict} />
+      <WhatIs dict={dict} locale={locale} />
 
       <Marquee items={dict.marquee} reverse className="bg-bongo-cyan text-bongo-black" />
 

@@ -84,7 +84,7 @@ Sitet kan køre i to tilstande:
 ### Sådan slår du Supabase til
 
 1. Opret et projekt på [supabase.com](https://supabase.com).
-2. Åbn **SQL Editor** og kør migrationerne i `supabase/migrations/` i rækkefølge: `0001_init.sql` (tabeller, RLS, seed), `0002_storage.sql` (mediebibliotek-bucket), `0003_events_locale.sql` (land pr. event).
+2. Åbn **SQL Editor** og kør migrationerne i `supabase/migrations/` i rækkefølge: `0001_init.sql` (tabeller, RLS, seed), `0002_storage.sql` (mediebibliotek-bucket), `0003_events_locale.sql` (land pr. event), `0004_weeztix.sql` (Weeztix shop-URL pr. event).
 3. Kopiér `.env.example` → `.env.local` og udfyld:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Project Settings → API)
    - `SUPABASE_SERVICE_ROLE_KEY` (samme side — **kun server, hold hemmelig**)
