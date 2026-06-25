@@ -1,4 +1,5 @@
 import AddAdminForm from "@/components/admin/AddAdminForm";
+import ResetPasswordButton from "@/components/admin/ResetPasswordButton";
 import { adminListAdmins } from "@/lib/admin-data";
 import { adminEmails } from "@/lib/supabase/env";
 import { getAdminUser } from "@/lib/auth";
@@ -57,17 +58,18 @@ export default async function UsersPage() {
                   <td className="px-5 py-4 text-admin-muted">
                     {r.source === "env" ? "Miljøvariabel" : "Oprettet i admin"}
                   </td>
-                  <td className="px-5 py-4 text-right">
-                    {r.source === "db" && !isSelf ? (
-                      <form action={revokeAdmin}>
-                        <input type="hidden" name="email" value={r.email} />
-                        <button className="rounded-full border border-admin-line bg-white px-3.5 py-1.5 text-xs font-semibold text-admin-peach-text transition hover:bg-admin-peach">
-                          Fjern adgang
-                        </button>
-                      </form>
-                    ) : (
-                      <span className="text-xs text-admin-muted">{isSelf ? "—" : "Via .env"}</span>
-                    )}
+                  <td className="px-5 py-4">
+                    <div className="flex flex-wrap items-start justify-end gap-2">
+                      <ResetPasswordButton email={r.email} />
+                      {r.source === "db" && !isSelf && (
+                        <form action={revokeAdmin}>
+                          <input type="hidden" name="email" value={r.email} />
+                          <button className="rounded-full border border-admin-line bg-white px-3.5 py-1.5 text-xs font-semibold text-admin-peach-text transition hover:bg-admin-peach">
+                            Fjern adgang
+                          </button>
+                        </form>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );

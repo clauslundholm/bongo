@@ -9,7 +9,17 @@ import { locales } from "@/i18n/config";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export type FormState = { ok?: boolean; error?: string };
+export type FormState = { ok?: boolean; error?: string; password?: string; email?: string };
+
+function generatePassword(length = 16): string {
+  // Readable, strong password (avoids ambiguous chars like O/0, l/1/I).
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789@#%&*";
+  let out = "";
+  const bytes = new Uint8Array(length);
+  globalThis.crypto.getRandomValues(bytes);
+  for (let i = 0; i < length; i++) out += chars[bytes[i] % chars.length];
+  return out;
+}
 
 async function requireAdmin() {
   const user = await getAdminUser();
@@ -277,10 +287,11 @@ export async function createAdmin(_prev: FormState, form: FormData): Promise<For
 
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const name = String(form.get("name") ?? "").trim();
-  const password = String(form.get("password") ?? "");
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Ugyldig email." };
-  if (password.length < 8) return { error: "Adgangskoden skal være mindst 8 tegn." };
+
+  // Auto-generate a strong password for the new login.
+  const password = generatePassword(16);
 
   // Create the Supabase Auth login (confirmed so they can log in straight away).
   const { error: createErr } = await sb.auth.admin.createUser({
@@ -288,8 +299,9 @@ export async function createAdmin(_prev: FormState, form: FormData): Promise<For
     password,
     email_confirm: true,
   });
-  // If the user already exists, that's fine — we still add them to the allowlist.
-  if (createErr && !/registered|already|exists/i.test(createErr.message)) {
+
+  const existed = Boolean(createErr && /registered|already|exists/i.test(createErr.message));
+  if (createErr && !existed) {
     return { error: createErr.message };
   }
 
@@ -297,7 +309,8 @@ export async function createAdmin(_prev: FormState, form: FormData): Promise<For
   if (error) return { error: error.message };
 
   revalidatePath("/admin/users");
-  return { ok: true };
+  // Only return the generated password when we actually created a new login.
+  return existed ? { ok: true, email } : { ok: true, password, email };
 }
 
 export async function revokeAdmin(form: FormData) {
@@ -317,15 +330,13 @@ export async function revokeAdmin(form: FormData) {
   revalidatePath("/admin/users");
 }
 
-export async function setAdminPassword(_prev: FormState, form: FormData): Promise<FormState> {
+export async function regenerateAdminPassword(_prev: FormState, form: FormData): Promise<FormState> {
   await requireAdmin();
   const sb = createSupabaseAdminClient();
   if (!sb) return { error: "Supabase er ikke konfigureret." };
 
   const email = String(form.get("email") ?? "").trim().toLowerCase();
-  const password = String(form.get("password") ?? "");
   if (!email) return { error: "Manglende email." };
-  if (password.length < 8) return { error: "Adgangskoden skal være mindst 8 tegn." };
 
   // Find the auth user by email.
   const { data, error: listErr } = await sb.auth.admin.listUsers();
@@ -333,9 +344,10 @@ export async function setAdminPassword(_prev: FormState, form: FormData): Promis
   const user = data.users.find((u) => u.email?.toLowerCase() === email);
   if (!user) return { error: "Brugeren findes ikke i Supabase Auth." };
 
+  const password = generatePassword(16);
   const { error } = await sb.auth.admin.updateUserById(user.id, { password });
   if (error) return { error: error.message };
-  return { ok: true };
+  return { ok: true, password, email };
 }
 
 export async function signOut() {
