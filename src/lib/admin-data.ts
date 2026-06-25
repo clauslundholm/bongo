@@ -97,6 +97,22 @@ export async function adminListMedia(): Promise<MediaItem[]> {
     });
 }
 
+export interface LanguageRow {
+  code: string;
+  name: string;
+  flag: string;
+  enabled: boolean;
+  sort: number;
+  created_at: string;
+}
+
+export async function adminListLanguages(): Promise<LanguageRow[]> {
+  const sb = createSupabaseAdminClient();
+  if (!sb) return [];
+  const { data } = await sb.from("languages").select("*").order("sort", { ascending: true });
+  return (data as LanguageRow[]) ?? [];
+}
+
 export async function adminCounts() {
   const sb = createSupabaseAdminClient();
   if (!sb) return { events: 0, subscribers: 0, messages: 0, unhandled: 0 };

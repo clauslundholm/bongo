@@ -1,17 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import BuyTicketsButton from "./BuyTicketsButton";
 import { type BongoEvent, formatEventDate } from "@/data/events";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 
-const accentMap: Record<BongoEvent["accent"], string> = {
-  pink: "bg-bongo-pink text-white",
-  yellow: "bg-bongo-yellow text-bongo-black",
-  cyan: "bg-bongo-cyan text-bongo-black",
-  purple: "bg-bongo-purple text-white",
+const accentBg: Record<BongoEvent["accent"], string> = {
+  pink: "bg-bongo-pink",
+  yellow: "bg-bongo-yellow",
+  cyan: "bg-bongo-cyan",
+  purple: "bg-bongo-purple",
+};
+const accentText: Record<BongoEvent["accent"], string> = {
+  pink: "text-white",
+  yellow: "text-bongo-black",
+  cyan: "text-bongo-black",
+  purple: "text-white",
 };
 
 export default function EventCard({
@@ -46,19 +53,40 @@ export default function EventCard({
       whileHover={{ y: -6, rotate: index % 2 ? -1 : 1 }}
       className="group card-pop flex h-full flex-col"
     >
-      <div className={`relative ${accentMap[event.accent]} rounded-t-[1.3rem] px-5 pt-6 pb-4 border-b-4 border-bongo-black`}>
-        <div className="flex items-center justify-between">
-          <div className="font-display leading-none">
-            <div className="text-4xl">{d.day}</div>
-            <div className="text-lg">{d.month}</div>
-          </div>
-          <div className="text-right font-display uppercase">
-            <div className="text-2xl">{event.city}</div>
-            <div className="text-xs opacity-80 font-body capitalize">{d.weekday}</div>
+      <div className="relative rounded-t-[1.3rem] border-b-4 border-bongo-black">
+        {/* background: event image, else accent colour */}
+        <div className="absolute inset-0 overflow-hidden rounded-t-[1.3rem]">
+          {event.image ? (
+            <>
+              <Image
+                src={event.image}
+                alt={event.city}
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-bongo-black/80 via-bongo-black/25 to-bongo-black/35" />
+            </>
+          ) : (
+            <div className={`h-full w-full ${accentBg[event.accent]}`} />
+          )}
+        </div>
+
+        <div className={`relative z-10 px-5 pt-6 pb-4 ${event.image ? "text-white" : accentText[event.accent]} min-h-[112px] flex flex-col justify-end`}>
+          <div className="flex items-end justify-between">
+            <div className="font-display leading-none drop-shadow-[2px_2px_0_rgba(0,0,0,0.35)]">
+              <div className="text-4xl">{d.day}</div>
+              <div className="text-lg">{d.month}</div>
+            </div>
+            <div className="text-right font-display uppercase drop-shadow-[2px_2px_0_rgba(0,0,0,0.35)]">
+              <div className="text-2xl">{event.city}</div>
+              <div className="text-xs opacity-90 font-body capitalize">{d.weekday}</div>
+            </div>
           </div>
         </div>
+
         {statusLabel && (
-          <span className="absolute -top-3 left-4 rotate-[-4deg] rounded-full border-2 border-bongo-black bg-white px-3 py-0.5 font-display text-[11px] uppercase text-bongo-black shadow-[2px_2px_0_0_#0A0A0A]">
+          <span className="absolute -top-3 left-4 z-20 rotate-[-4deg] rounded-full border-2 border-bongo-black bg-white px-3 py-0.5 font-display text-[11px] uppercase text-bongo-black shadow-[2px_2px_0_0_#0A0A0A]">
             {statusLabel}
           </span>
         )}

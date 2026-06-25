@@ -43,10 +43,10 @@ export default async function proxy(req: NextRequest) {
     return res;
   }
 
-  const hasLocale = locales.some(
-    (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`)
-  );
-  if (hasLocale) return res;
+  // Any 2–3 letter first segment is treated as a locale prefix; the [locale]
+  // layout validates it against the active languages (and 404s if unknown).
+  const firstSegment = pathname.split("/")[1] ?? "";
+  if (/^[a-z]{2,3}$/.test(firstSegment)) return res;
 
   const locale = getLocale(req);
   const url = req.nextUrl.clone();

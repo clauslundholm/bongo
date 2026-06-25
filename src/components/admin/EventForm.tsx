@@ -4,19 +4,13 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { saveEvent, type FormState } from "@/app/admin/actions";
 import type { EventRow } from "@/lib/data/events";
+import type { Language } from "@/lib/data/languages";
 import MediaField from "./MediaField";
 
 const STATUSES = ["onsale", "fewleft", "soldout", "new"];
 const ACCENTS = ["pink", "yellow", "cyan", "purple"];
-const COUNTRIES = [
-  { value: "da", label: "🇩🇰 Danmark" },
-  { value: "no", label: "🇳🇴 Norge" },
-  { value: "sv", label: "🇸🇪 Sverige" },
-  { value: "fi", label: "🇫🇮 Suomi" },
-  { value: "fo", label: "🇫🇴 Føroyar" },
-];
 
-export default function EventForm({ event }: { event?: EventRow | null }) {
+export default function EventForm({ event, languages }: { event?: EventRow | null; languages: Language[] }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveEvent, {});
   const [image, setImage] = useState(event?.image ?? "");
 
@@ -28,8 +22,8 @@ export default function EventForm({ event }: { event?: EventRow | null }) {
         <label className="block sm:col-span-2">
           <span className="text-xs font-semibold uppercase tracking-wide text-admin-muted">Land (hvilket sprog/land viser showet)</span>
           <select name="locale" defaultValue={event?.locale ?? "da"} className="pp-input mt-1.5">
-            {COUNTRIES.map((c) => (
-              <option key={c.value} value={c.value}>{c.label}</option>
+            {languages.map((c) => (
+              <option key={c.code} value={c.code}>{c.flag} {c.name}</option>
             ))}
           </select>
         </label>

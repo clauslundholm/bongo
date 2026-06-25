@@ -19,6 +19,11 @@ export const localeFlags: Record<Locale, string> = {
   fo: "🇫🇴",
 };
 
+/**
+ * Format guard for a locale-looking path segment (2–3 lowercase letters).
+ * The authoritative "is this an active language" check happens in the
+ * [locale] layout against the languages table.
+ */
 export function isLocale(value: string): value is Locale {
-  return (locales as readonly string[]).includes(value);
+  return /^[a-z]{2,3}$/.test(value);
 }

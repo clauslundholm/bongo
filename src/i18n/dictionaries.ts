@@ -1282,6 +1282,6 @@ const fo: Dictionary = {
 
 export const dictionaries: Record<Locale, Dictionary> = { da, no, sv, fi, fo };
 
-export function getDictionary(locale: Locale): Dictionary {
-  return dictionaries[locale] ?? da;
+export function getDictionary(locale: string): Dictionary {
+  return dictionaries[locale as Locale] ?? da;
 }

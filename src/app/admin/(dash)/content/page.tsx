@@ -5,9 +5,9 @@ import AboutContentForm from "@/components/admin/AboutContentForm";
 import HeroForm from "@/components/admin/HeroForm";
 import HomeHeroForm from "@/components/admin/HomeHeroForm";
 import { setContentLocale, resetContent } from "../../actions";
-import { adminGetContent } from "@/lib/admin-data";
+import { adminGetContent, adminListLanguages } from "@/lib/admin-data";
 import { getDictionary } from "@/i18n/dictionaries";
-import { locales, localeNames, localeFlags, isLocale, type Locale } from "@/i18n/config";
+import { isLocale, type Locale } from "@/i18n/config";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +61,9 @@ export default async function ContentPage({
     ? (cookieLocale as Locale)
     : "da";
 
+  const langs = await adminListLanguages();
+  const currentLang = langs.find((l) => l.code === locale);
+
   const override = await adminGetContent(key, locale);
   const current = (override ?? fallbackFor(key, locale)) as Record<string, unknown>;
 
@@ -75,19 +78,20 @@ export default async function ContentPage({
       <div className="pp-card mt-6 p-4">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-admin-muted">Redigerer sprog</p>
         <div className="flex flex-wrap gap-2">
-          {locales.map((l) => (
-            <form key={l} action={setContentLocale}>
+          {langs.map((l) => (
+            <form key={l.code} action={setContentLocale}>
               <input type="hidden" name="key" value={key} />
-              <input type="hidden" name="locale" value={l} />
+              <input type="hidden" name="locale" value={l.code} />
               <button
                 className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                  l === locale
+                  l.code === locale
                     ? "border-admin-ink bg-admin-ink text-white"
                     : "border-admin-line bg-white text-admin-ink hover:bg-admin-panel"
-                }`}
+                } ${l.enabled ? "" : "opacity-60"}`}
               >
-                <span>{localeFlags[l]}</span>
-                {localeNames[l]}
+                <span>{l.flag}</span>
+                {l.name}
+                {!l.enabled && <span className="text-[10px] uppercase">(off)</span>}
               </button>
             </form>
           ))}
@@ -112,7 +116,7 @@ export default async function ContentPage({
       </div>
 
       <div className="mt-3 flex items-center gap-2 text-sm text-admin-muted">
-        <span className="pp-badge pp-badge-new">{localeFlags[locale]} {localeNames[locale]}</span>
+        <span className="pp-badge pp-badge-new">{currentLang?.flag ?? "🌐"} {currentLang?.name ?? locale}</span>
         <span>{override ? "Tilpasset for dette sprog" : "Viser standardtekst — gem for at tilpasse dette sprog"}</span>
       </div>
 
@@ -132,7 +136,7 @@ export default async function ContentPage({
         <form action={resetContent} className="mt-4">
           <input type="hidden" name="key" value={key} />
           <input type="hidden" name="locale" value={locale} />
-          <button className="pp-btn-ghost px-4 py-2 text-xs">Nulstil {localeNames[locale]} til standardtekst</button>
+          <button className="pp-btn-ghost px-4 py-2 text-xs">Nulstil {currentLang?.name ?? locale} til standardtekst</button>
         </form>
       )}
     </div>

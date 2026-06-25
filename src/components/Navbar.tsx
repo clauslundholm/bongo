@@ -6,8 +6,17 @@ import { useState, useEffect } from "react";
 import LanguageSwitcher from "./LanguageSwitcher";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
+import type { Language } from "@/lib/data/languages";
 
-export default function Navbar({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export default function Navbar({
+  locale,
+  dict,
+  languages,
+}: {
+  locale: Locale;
+  dict: Dictionary;
+  languages: Language[];
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -57,7 +66,7 @@ export default function Navbar({ locale, dict }: { locale: Locale; dict: Diction
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <LanguageSwitcher current={locale} />
+          <LanguageSwitcher current={locale} languages={languages} />
           <Link href={`${base}/events`} className="btn-pink hidden px-5 py-2 text-sm sm:inline-flex">
             {dict.hero.cta2}
           </Link>

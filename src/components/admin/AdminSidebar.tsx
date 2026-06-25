@@ -24,6 +24,9 @@ const ICONS: Record<string, React.ReactNode> = {
   media: (
     <path d="M4 5h16v14H4V5Zm0 11 5-5 4 4 3-3 4 4M15.5 9a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" />
   ),
+  globe: (
+    <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 0c2.5 2.5 2.5 15.5 0 18M12 3c-2.5 2.5-2.5 15.5 0 18M3.5 9h17M3.5 15h17" />
+  ),
   logout: (
     <path d="M15 12H4m0 0 3.5-3.5M4 12l3.5 3.5M14 5h5v14h-5" />
   ),
@@ -44,6 +47,7 @@ const NAV = [
   { href: "/admin/messages", label: "Beskeder", icon: "chat" },
   { href: "/admin/content", label: "Indhold", icon: "doc" },
   { href: "/admin/media", label: "Medier", icon: "media" },
+  { href: "/admin/languages", label: "Sprog", icon: "globe" },
 ];
 
 export default function AdminSidebar({ email }: { email: string }) {

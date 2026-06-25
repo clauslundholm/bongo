@@ -11,6 +11,8 @@ const nextConfig = {
       { protocol: "https", hostname: "bongosbingo.fi" },
       { protocol: "https", hostname: "www.bongosbingo.fi" },
       { protocol: "https", hostname: "p16-sign-va.tiktokcdn.com" },
+      { protocol: "https", hostname: "**.supabase.co" },
+      { protocol: "https", hostname: "**.supabase.in" },
     ],
   },
 };

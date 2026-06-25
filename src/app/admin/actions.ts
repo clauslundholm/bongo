@@ -220,6 +220,53 @@ export async function renameMedia(form: FormData) {
   revalidatePath("/admin/media");
 }
 
+/* ───────────────── Languages ───────────────── */
+
+export async function createLanguage(_prev: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return { error: "Supabase er ikke konfigureret." };
+
+  const code = String(form.get("code") ?? "").trim().toLowerCase();
+  const name = String(form.get("name") ?? "").trim();
+  const flag = String(form.get("flag") ?? "").trim();
+
+  if (!/^[a-z]{2,3}$/.test(code)) return { error: "Ugyldig sprogkode — brug 2–3 små bogstaver (fx en, de)." };
+  if (!name) return { error: "Angiv et navn for sproget." };
+
+  const { error } = await sb
+    .from("languages")
+    .upsert({ code, name, flag, enabled: true, sort: 99 }, { onConflict: "code" });
+  if (error) return { error: error.message };
+
+  revalidatePublic();
+  revalidatePath("/admin/languages");
+  return { ok: true };
+}
+
+export async function toggleLanguage(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const code = String(form.get("code") ?? "").trim();
+  const enabled = form.get("enabled") === "true";
+  if (code === "da" && !enabled) return; // never disable the default language
+  if (code) await sb.from("languages").update({ enabled }).eq("code", code);
+  revalidatePublic();
+  revalidatePath("/admin/languages");
+}
+
+export async function deleteLanguage(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const code = String(form.get("code") ?? "").trim();
+  if (code === "da") return; // never delete the default language
+  if (code) await sb.from("languages").delete().eq("code", code);
+  revalidatePublic();
+  revalidatePath("/admin/languages");
+}
+
 export async function signOut() {
   const supabase = await createSupabaseServerClient();
   if (supabase) await supabase.auth.signOut();
