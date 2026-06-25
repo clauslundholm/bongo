@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { getAdminUser } from "@/lib/auth";
+import { adminEmails } from "@/lib/supabase/env";
 import { locales } from "@/i18n/config";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -265,6 +266,76 @@ export async function deleteLanguage(form: FormData) {
   if (code) await sb.from("languages").delete().eq("code", code);
   revalidatePublic();
   revalidatePath("/admin/languages");
+}
+
+/* ───────────────── Admin users ───────────────── */
+
+export async function createAdmin(_prev: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return { error: "Supabase er ikke konfigureret." };
+
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
+  const name = String(form.get("name") ?? "").trim();
+  const password = String(form.get("password") ?? "");
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Ugyldig email." };
+  if (password.length < 8) return { error: "Adgangskoden skal være mindst 8 tegn." };
+
+  // Create the Supabase Auth login (confirmed so they can log in straight away).
+  const { error: createErr } = await sb.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+  });
+  // If the user already exists, that's fine — we still add them to the allowlist.
+  if (createErr && !/registered|already|exists/i.test(createErr.message)) {
+    return { error: createErr.message };
+  }
+
+  const { error } = await sb.from("admins").upsert({ email, name: name || null }, { onConflict: "email" });
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/users");
+  return { ok: true };
+}
+
+export async function revokeAdmin(form: FormData) {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return;
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
+  if (!email) return;
+
+  // Don't let an admin revoke their own access (avoid lock-out).
+  const me = await getAdminUser();
+  if (me?.email?.toLowerCase() === email) return;
+  // Env-bootstrap admins can't be revoked here (managed via ADMIN_EMAILS).
+  if (adminEmails().includes(email)) return;
+
+  await sb.from("admins").delete().eq("email", email);
+  revalidatePath("/admin/users");
+}
+
+export async function setAdminPassword(_prev: FormState, form: FormData): Promise<FormState> {
+  await requireAdmin();
+  const sb = createSupabaseAdminClient();
+  if (!sb) return { error: "Supabase er ikke konfigureret." };
+
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
+  const password = String(form.get("password") ?? "");
+  if (!email) return { error: "Manglende email." };
+  if (password.length < 8) return { error: "Adgangskoden skal være mindst 8 tegn." };
+
+  // Find the auth user by email.
+  const { data, error: listErr } = await sb.auth.admin.listUsers();
+  if (listErr) return { error: listErr.message };
+  const user = data.users.find((u) => u.email?.toLowerCase() === email);
+  if (!user) return { error: "Brugeren findes ikke i Supabase Auth." };
+
+  const { error } = await sb.auth.admin.updateUserById(user.id, { password });
+  if (error) return { error: error.message };
+  return { ok: true };
 }
 
 export async function signOut() {

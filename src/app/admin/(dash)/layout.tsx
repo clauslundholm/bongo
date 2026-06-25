@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { isSupabaseConfigured, isAdminEmail } from "@/lib/supabase/env";
-import { getSessionUser } from "@/lib/auth";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { getSessionUser, isAdmin } from "@/lib/auth";
 import SetupNotice from "@/components/admin/SetupNotice";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 
@@ -9,7 +9,7 @@ export default async function DashLayout({ children }: { children: React.ReactNo
 
   const user = await getSessionUser();
   if (!user) redirect("/admin/login");
-  if (!isAdminEmail(user.email)) {
+  if (!(await isAdmin(user.email))) {
     redirect(`/admin/login?error=forbidden&email=${encodeURIComponent(user.email ?? "")}`);
   }
 

@@ -84,7 +84,7 @@ Sitet kan køre i to tilstande:
 ### Sådan slår du Supabase til
 
 1. Opret et projekt på [supabase.com](https://supabase.com).
-2. Åbn **SQL Editor** og kør migrationerne i `supabase/migrations/` i rækkefølge: `0001_init.sql` (tabeller, RLS, seed), `0002_storage.sql` (mediebibliotek-bucket), `0003_events_locale.sql` (land pr. event), `0004_weeztix.sql` (Weeztix shop-URL pr. event), `0005_languages.sql` (sprogstyring).
+2. Åbn **SQL Editor** og kør migrationerne i `supabase/migrations/` i rækkefølge: `0001_init.sql` (tabeller, RLS, seed), `0002_storage.sql` (mediebibliotek-bucket), `0003_events_locale.sql` (land pr. event), `0004_weeztix.sql` (Weeztix shop-URL pr. event), `0005_languages.sql` (sprogstyring), `0006_admins.sql` (admin-brugere).
 3. Kopiér `.env.example` → `.env.local` og udfyld:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Project Settings → API)
    - `SUPABASE_SERVICE_ROLE_KEY` (samme side — **kun server, hold hemmelig**)
@@ -99,6 +99,8 @@ Sitet kan køre i to tilstande:
 - **Beskeder** — læs kontaktbeskeder, markér som læst.
 - **Indhold** — rediger sidetekster pr. sprog i rigtige formularfelter (vælg sprog først; hvert sprog er uafhængigt). Inkl. baggrundsvideo/-billede i hero på Events & Festivaller, Virksomheder, How-to-Bingo og Shows.
 - **Medier** — mediebibliotek på Supabase Storage: upload billeder/video, omdøb, slet, kopiér URL. Vælg medier direkte i indholds- og show-formularerne via "Bibliotek".
+- **Sprog** — aktivér/deaktivér, opret og slet sprog.
+- **Administratorer** — opret nye admins (email + adgangskode oprettes direkte i Supabase Auth) og fjern adgang. `ADMIN_EMAILS` fungerer som bootstrap/fallback.
 
 Login bruger Supabase Auth (email/password) og er låst til `ADMIN_EMAILS`. Skrivninger går via service-role-nøglen server-side; offentlige læsninger er beskyttet af RLS (kun udgivne events).
 

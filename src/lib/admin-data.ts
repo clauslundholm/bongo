@@ -113,6 +113,20 @@ export async function adminListLanguages(): Promise<LanguageRow[]> {
   return (data as LanguageRow[]) ?? [];
 }
 
+export interface AdminRow {
+  id: string;
+  email: string;
+  name: string | null;
+  created_at: string;
+}
+
+export async function adminListAdmins(): Promise<AdminRow[]> {
+  const sb = createSupabaseAdminClient();
+  if (!sb) return [];
+  const { data } = await sb.from("admins").select("*").order("created_at", { ascending: true });
+  return (data as AdminRow[]) ?? [];
+}
+
 export async function adminCounts() {
   const sb = createSupabaseAdminClient();
   if (!sb) return { events: 0, subscribers: 0, messages: 0, unhandled: 0 };
